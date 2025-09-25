@@ -3,7 +3,9 @@ package com.villaekinoks.app.villapricing;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.villaekinoks.app.generic.entity.Price;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -24,7 +26,8 @@ public class PricingRange {
 
   private String endperiod;
 
-  private String pricepernight;
+  @Embedded
+  private Price pricepernight;
 
   @ManyToOne
   @JoinColumn(name = "villapricingschema_id", nullable = false)

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,7 +44,7 @@ public class AppUser implements UserDetails {
 
   protected Boolean isonline;
 
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   protected UserStatusSet statusset;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -60,21 +61,43 @@ public class AppUser implements UserDetails {
   protected DeleteStatus deletestatus;
 
   @Override
+  @JsonIgnore
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+    return AuthorityUtils.createAuthorityList("ROLE_" + this.role.toString());
   }
 
   @Override
   public String getPassword() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+    return this.password;
   }
 
   @Override
   public String getUsername() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    return this.login;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isAccountNonExpired() {
+    return this.statusset.getOperationstatus() == OperationStatus.ENABLED;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isAccountNonLocked() {
+    return this.statusset.getLockstatus() == LockStatus.UNLOCKED;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isCredentialsNonExpired() {
+    return this.statusset.getVerificationstatus() == VerificationStatus.VERIFIED;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isEnabled() {
+    return this.statusset.getServicestatus() == ServiceStatus.ACTIVE;
   }
 
 }

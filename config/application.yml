@@ -1,0 +1,120 @@
+spring:
+  profiles:
+    active:
+    - production
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:3306/${DB_NAME}?allowPublicKeyRetrieval=true&useUnicode=yes&characterEncoding=UTF8&verifyServerCertificate=false&useSSL=false&requireSSL=false
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jackson:
+    time-zone: "Europe/Helsinki"
+    serialization:
+      fail-on-empty-beans: false
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 24MB
+      max-request-size: 256MB
+
+  http:
+    multipart:
+      max-file-size: 24MB
+      max-request-size: 256MB
+
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+server:
+  port: 8080
+  http:
+    port: 8080
+  # ssl:
+  #   key-store: /opt/app/keystore.p12
+  #   key-store-password: pED18ggA!
+  #   keyStoreType: PKCS12
+  #   keyAlias: backoffice-mls-01
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+file:
+  upload-dir: ./team1001-cdn
+
+gcp:
+  filename: vernal-signal-243213-e1053fdc8a6e.json
+  storage:
+    bucketname: team1001
+    projectid: vernal-signal-243213
+
+resilience4j:
+  timelimiter: 
+    configs:
+      default:
+        timeout-duration: 300s
+    instances:
+      cvparser:
+        base-config: default
+        timeout-duration: 300s
+        cancel-running-future: true
+  bulkhead:
+    configs:
+      default:
+        max-concurrent-calls: 1
+        max-wait-duration: 0
+    instances:
+      cvparser:
+        base-config: default
+
+feign :
+  circuitbreaker :
+    enabled : true
+  client:
+    config:
+      default :
+        loggerLevel : full
+      cv-parser:
+        connectTimeout: 160000000
+        readTimeout: 160000000
+      mail-sender-api:
+        loggerLevel : full
+        
+email:
+  gmail:
+    username: noreply@ditisklassikaal.nl
+    password: ywvvhhmkacnaietp
+
+mail-templates:
+  path: mail-templates
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+    
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver

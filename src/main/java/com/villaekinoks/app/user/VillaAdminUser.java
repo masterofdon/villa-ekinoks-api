@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -19,7 +21,10 @@ public class VillaAdminUser extends AppUser {
   @JsonIncludeProperties({ "id", "name" })
   private Villa villa;
 
-  public VillaAdminUser(String username, String password) {
+  @Enumerated(EnumType.STRING)
+  private VillaAdminUserRegistrationStatus registrationstatus;
+
+  public VillaAdminUser() {
     this.role = Role.VILLAADMIN;
   }
 }

@@ -5,12 +5,17 @@ import java.util.Set;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.villaekinoks.app.user.SystemAdminUser;
 import com.villaekinoks.app.user.VillaAdminUser;
+import com.villaekinoks.app.villapricing.VillaPricingSchema;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
@@ -33,6 +38,18 @@ public class Villa {
 
   @OneToMany(mappedBy = "villa", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
   @JsonIgnore
-  private Set<VillaAdminUser> admins;
+  private Set<VillaOperator> operators;
+
+  @OneToOne(mappedBy = "villa", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  private VillaPricingSchema pricing;
+
+  @ManyToOne
+  @JoinColumn(name = "owner_id", nullable = false)
+  private VillaAdminUser owner;
+
+  @ManyToOne
+  @JoinColumn(name = "creator_id")
+  @JsonIncludeProperties({ "id", "personalinfo" })
+  private SystemAdminUser createdby;
 
 }

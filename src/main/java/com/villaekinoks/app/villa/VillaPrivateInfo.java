@@ -2,10 +2,12 @@ package com.villaekinoks.app.villa;
 
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.CascadeType;
+import com.villaekinoks.app.generic.entity.Address;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +21,9 @@ public class VillaPrivateInfo {
   @UuidGenerator
   private String id;
 
-  @OneToOne(mappedBy = "villaprivateinfo", cascade = CascadeType.REMOVE)
-  private VillaAddress address;
+  @ManyToOne
+  @JoinColumn(name = "address_id")
+  private Address address;
 
   @OneToOne
   @JoinColumn(name = "villa_id", nullable = false)

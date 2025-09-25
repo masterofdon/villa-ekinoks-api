@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-AppVillaEkinoksApplication<app-villa-ekinoks>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.villaekinoks.app.AppVillaEkinoksApplication",
+      "projectName": "app-villa-ekinoks",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
