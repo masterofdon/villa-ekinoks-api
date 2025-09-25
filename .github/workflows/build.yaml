@@ -13,18 +13,6 @@ on:
         required: true
         type: string
     secrets:
-      yq_binary:
-        required: true
-      yq_version:
-        required: true
-      mysql_host:
-        required: true
-      mysql_dbname:
-        required: true
-      mysql_user:
-        required: true
-      mysql_pass:
-        required: true
       dockerhub_user:
         required: true
       dockerhub_pass:
