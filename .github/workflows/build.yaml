@@ -1,0 +1,75 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+      repo:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+    secrets:
+      yq_binary:
+        required: true
+      yq_version:
+        required: true
+      mysql_host:
+        required: true
+      mysql_dbname:
+        required: true
+      mysql_user:
+        required: true
+      mysql_pass:
+        required: true
+      dockerhub_user:
+        required: true
+      dockerhub_pass:
+        required: true
+
+env:
+  CONFIG_FILE: "./config/application.yml"
+
+jobs:
+  Maven:
+    runs-on: ekinoks-webapp
+    environment:
+      name: ${{ inputs.env }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Add Java to the PATH
+        run: echo "$(find /opt/hostedtoolcache/ -type d -name bin)" >> $GITHUB_PATH
+
+      - name: Setup Maven
+        run: |
+          #wget -q https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+          #tar -xf apache-maven-3.8.6-bin.tar.gz
+          #sudo mv apache-maven-3.8.6 /opt/maven
+          echo "/opt/maven/bin" >> $GITHUB_PATH
+
+      - name: Install packages
+        run: mvn -DskipTests -f pom.xml clean install
+
+      - name: Prepare runtime files
+        run: |
+          docker login -u=${{ secrets.dockerhub_user }} -p=${{secrets.dockerhub_pass}}
+          rm -rf /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
+          mkdir -p /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
+          mv Dockerfile /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
+          mv config/ /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
+          mv mail-templates/ /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
+          mv target/*.jar /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/app.jar

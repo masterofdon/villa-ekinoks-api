@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+      repo:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+    secrets:
+      dockerhub_user:
+        required: true
+      dockerhub_pass:
+        required: true
+
+env:
+  RUNTIME_DIR: /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
+
+jobs:
+  DockerHub:
+    runs-on: ekinoks-webapp
+    environment:
+      name: ${{ inputs.env }}
+
+    steps:
+      - name: Login Dockerhub
+        run: |
+          echo ${{ secrets.dockerhub_pass }} > pass
+          cat pass | docker login --username ${{ secrets.dockerhub_user }} --password-stdin
+          rm pass
+
+      - name: Docker Build
+        run: |
+          cd $RUNTIME_DIR
+          docker build -t ditisklassikaal/${{ inputs.repo }}:${{ inputs.branch }} ./
+
+      - name: Push Image
+        run: |
+          docker image push ditisklassikaal/${{ inputs.repo }}:${{ inputs.branch }}

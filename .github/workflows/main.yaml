@@ -1,0 +1,35 @@
+name: Klassikaal MLS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  # Test:
+  #   uses: ./.github/workflows/test.yaml
+
+  Build:
+    uses: ./.github/workflows/build.yaml
+    # needs: [Test]
+    with:
+      env: ${{ github.ref_name }}
+      repo: ${{ github.event.repository.name }}
+      branch: ${{ github.ref_name }}
+    secrets:
+      dockerhub_user: ${{ secrets.DOCKER_USERNAME }}
+      dockerhub_pass: ${{ secrets.DOCKER_PASSWORD }}
+
+  Deploy:
+    needs: [Build]
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      env: ${{ github.ref_name }}
+      repo: ${{ github.event.repository.name }}
+      branch: ${{ github.ref_name }}
+    secrets:
+      dockerhub_user: ${{ secrets.DOCKER_USERNAME }}
+      dockerhub_pass: ${{ secrets.DOCKER_PASSWORD }}
