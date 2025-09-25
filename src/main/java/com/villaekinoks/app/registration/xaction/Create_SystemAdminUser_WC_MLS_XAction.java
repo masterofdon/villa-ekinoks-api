@@ -24,4 +24,6 @@ public class Create_SystemAdminUser_WC_MLS_XAction {
 
   private String phonenumber;
 
+  private String secret;
+
 }

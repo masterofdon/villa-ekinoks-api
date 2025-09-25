@@ -1,5 +1,7 @@
 package com.villaekinoks.app.villapricing.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.villaekinoks.app.villapricing.PricingRange;
@@ -27,5 +29,9 @@ public class PricingRangeService {
 
   public void delete(PricingRange pricingRange) {
     pricingRangeRepository.delete(pricingRange);
+  }
+
+  public List<PricingRange> findOverlappingRanges(String villaPricingSchemaId, String startPeriod, String endPeriod) {
+    return pricingRangeRepository.findOverlappingRanges(villaPricingSchemaId, startPeriod, endPeriod);
   }
 }

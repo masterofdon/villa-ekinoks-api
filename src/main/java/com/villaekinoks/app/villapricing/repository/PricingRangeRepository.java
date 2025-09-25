@@ -1,5 +1,7 @@
 package com.villaekinoks.app.villapricing.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,6 +17,17 @@ public interface PricingRangeRepository extends JpaRepository<PricingRange, Stri
       """)
   PricingRange findVillasPriceInDate(
       String villaId,
+      String startPeriod,
+      String endPeriod);
+
+  @Query("""
+      SELECT pr FROM PricingRange pr
+      WHERE pr.villapricingschema.id = :villaPricingSchemaId
+      AND pr.startperiod < :endPeriod
+      AND pr.endperiod > :startPeriod
+      """)
+  List<PricingRange> findOverlappingRanges(
+      String villaPricingSchemaId,
       String startPeriod,
       String endPeriod);
 }

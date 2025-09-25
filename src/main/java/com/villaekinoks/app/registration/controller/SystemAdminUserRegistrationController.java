@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.villaekinoks.app.appauthenticator.service.AppAuthenticatorService;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseCodes;
@@ -28,9 +29,17 @@ public class SystemAdminUserRegistrationController {
   private final SystemAdminUserRegistrationService systemAdminUserRegistrationService;
   private final SystemAdminUserService systemAdminUserService;
 
+  private final AppAuthenticatorService appAuthenticatorService;
+
   @PostMapping
   public GenericApiResponse<Create_SystemAdminUser_WC_MLS_XAction_Response> createSystemAdminUser(
       @RequestBody Create_SystemAdminUser_WC_MLS_XAction xAction) {
+
+    if (this.appAuthenticatorService.getCode().equals(xAction.getSecret()) == false) {
+      throw new BadApiRequestException(
+          GenericApiResponseMessages.Generic.FAIL,
+          "400#8002");
+    }
 
     SystemAdminUser existingUser = systemAdminUserService.getByLogin(xAction.getEmail());
     if (existingUser != null) {

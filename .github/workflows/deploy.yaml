@@ -37,8 +37,8 @@ jobs:
       - name: Docker Build
         run: |
           cd $RUNTIME_DIR
-          docker build -t ditisklassikaal/${{ inputs.repo }}:${{ inputs.branch }} ./
+          docker build -t aerdemekin/${{ inputs.repo }}:${{ inputs.branch }} ./
 
       - name: Push Image
         run: |
-          docker image push ditisklassikaal/${{ inputs.repo }}:${{ inputs.branch }}
+          docker image push aerdemekin/${{ inputs.repo }}:${{ inputs.branch }}
