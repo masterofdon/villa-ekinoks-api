@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AppUserService {
   
-  private AppUserRepository appUserRepository;
+  private final AppUserRepository appUserRepository;
 
   public AppUser getById(String id){
     return appUserRepository.findById(id).orElse(null);
