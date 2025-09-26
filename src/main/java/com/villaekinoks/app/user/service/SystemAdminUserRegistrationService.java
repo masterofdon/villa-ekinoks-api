@@ -1,5 +1,6 @@
 package com.villaekinoks.app.user.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.villaekinoks.app.user.AppUserPersonalInfo;
@@ -20,6 +21,8 @@ public class SystemAdminUserRegistrationService {
 
   private final SystemAdminUserService systemAdminUserService;
 
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
   public SystemAdminUser registerSystemAdminUser(
       String login,
       String password,
@@ -32,7 +35,7 @@ public class SystemAdminUserRegistrationService {
 
     SystemAdminUser sAdminUser = new SystemAdminUser();
     sAdminUser.setLogin(login);
-    sAdminUser.setPassword(password);
+    sAdminUser.setPassword(bCryptPasswordEncoder.encode(password));
 
     AppUserPersonalInfo personalinfo = new AppUserPersonalInfo();
     personalinfo.setFirstname(firstname);
