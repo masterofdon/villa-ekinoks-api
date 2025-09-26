@@ -5,11 +5,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.villaekinoks.app.generic.api.GenericApiResponse;
+
 @ControllerAdvice
 public class RestAdvice {
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<String> handleException(NotFoundException ex) {
     return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(NotAuthorizedException.class)
+  public ResponseEntity<String> handleException(NotAuthorizedException ex) {
+    return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+  }
+
+  @ExceptionHandler(BadApiRequestException.class)
+  public ResponseEntity<GenericApiResponse<Void>> handleException(BadApiRequestException ex) {
+    return new ResponseEntity<>(
+        new GenericApiResponse<>(
+            HttpStatus.BAD_REQUEST.value(),
+            ex.getMessage(),
+            ex.getResponsecode()),
+        HttpStatus.BAD_REQUEST);
   }
 }

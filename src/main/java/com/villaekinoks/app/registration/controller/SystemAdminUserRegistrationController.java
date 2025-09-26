@@ -35,7 +35,7 @@ public class SystemAdminUserRegistrationController {
   public GenericApiResponse<Create_SystemAdminUser_WC_MLS_XAction_Response> createSystemAdminUser(
       @RequestBody Create_SystemAdminUser_WC_MLS_XAction xAction) {
 
-    if (this.appAuthenticatorService.getCode().equals(xAction.getSecret()) == false) {
+    if (xAction.getSecret() == null || this.appAuthenticatorService.getCode().equals(xAction.getSecret()) == false) {
       throw new BadApiRequestException(
           GenericApiResponseMessages.Generic.FAIL,
           "400#8002");
