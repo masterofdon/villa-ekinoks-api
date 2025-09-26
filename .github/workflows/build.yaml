@@ -59,5 +59,4 @@ jobs:
           mkdir -p /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
           mv Dockerfile /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
           mv config/ /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
-          mv mail-templates/ /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
           mv target/*.jar /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/app.jar
