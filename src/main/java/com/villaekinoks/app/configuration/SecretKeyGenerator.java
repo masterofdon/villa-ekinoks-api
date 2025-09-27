@@ -16,7 +16,7 @@ public class SecretKeyGenerator {
 
   public SecretKey generateAPISecretKey() {
 
-    String secretKeyStr = "jwt_secret_key";
+    String secretKeyStr = JWTConstants.SECRET_KEY;
     return Keys.hmacShaKeyFor(secretKeyStr.getBytes(StandardCharsets.UTF_8));
   }
 }

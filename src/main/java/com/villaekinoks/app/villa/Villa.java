@@ -40,11 +40,11 @@ public class Villa {
   @JsonIgnore
   private Set<VillaOperator> operators;
 
-  @OneToOne(mappedBy = "villa", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+  @OneToOne(mappedBy = "villa", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private VillaPricingSchema pricing;
 
   @ManyToOne
-  @JoinColumn(name = "owner_id", nullable = false)
+  @JoinColumn(name = "owner_id")
   private VillaAdminUser owner;
 
   @ManyToOne

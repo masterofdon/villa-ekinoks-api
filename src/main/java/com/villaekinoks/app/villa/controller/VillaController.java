@@ -16,6 +16,8 @@ import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseCodes;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
+import com.villaekinoks.app.generic.entity.Address;
+import com.villaekinoks.app.generic.service.AddressService;
 import com.villaekinoks.app.user.SystemAdminUser;
 import com.villaekinoks.app.user.VillaAdminUser;
 import com.villaekinoks.app.user.service.VillaAdminUserService;
@@ -24,6 +26,7 @@ import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.VillaPrivateInfo;
 import com.villaekinoks.app.villa.VillaPublicInfo;
 import com.villaekinoks.app.villa.response.Create_Villa_WC_MLS_XAction_Response;
+import com.villaekinoks.app.villa.response.Get_Villa_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_PricingRange_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PublicInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.service.VillaService;
@@ -52,6 +55,21 @@ public class VillaController {
 
   private final PricingRangeUtilService pricingRangeUtilService;
 
+  private final AddressService addressService;
+
+  @GetMapping("/{id}")
+  public GenericApiResponse<Get_Villa_WC_MLS_XAction_Response> getVillaById(@PathVariable String id) {
+    Villa villa = this.villaService.getById(id);
+    if (villa == null) {
+      throw new NotFoundException(GenericApiResponseMessages.Generic.FAIL, "404#0011");
+    }
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        GenericApiResponseCodes.VillaController.GET_VILLA_SUCCESS,
+        new Get_Villa_WC_MLS_XAction_Response(villa));
+  }
+
   @PostMapping
   @Transactional
   public GenericApiResponse<Create_Villa_WC_MLS_XAction_Response> createVilla(
@@ -69,33 +87,33 @@ public class VillaController {
       throw new BadApiRequestException("Villa Already Exists", "400#0010");
     }
 
-    VillaAdminUser owner = this.villaAdminUserService.getByLogin(xAction.getOwneremail());
-    if (owner == null) {
-      owner = this.villaOwnerRegistrationService.startVillaOwnerRegistration(
-          xAction.getOwneremail(),
-          xAction.getOwnerfirstname(),
-          xAction.getOwnermiddlename(),
-          xAction.getOwnerlastname(),
-          xAction.getOwnerdisplayname(),
-          xAction.getOwnerphonenumber(),
-          xAction.getOwneremail());
-    }
-
     villa = new Villa();
 
     VillaPublicInfo publicinfo = new VillaPublicInfo();
     publicinfo.setName(xAction.getName());
     publicinfo.setSlug(xAction.getSlug());
     publicinfo.setDescription(xAction.getDescription());
+    publicinfo.setPromotext(xAction.getPromotext());
     publicinfo.setVilla(villa);
 
     VillaPrivateInfo privateinfo = new VillaPrivateInfo();
-    privateinfo.setAddress(xAction.getAddress());
+    if (xAction.getAddress() != null) {
+      Address address = new Address();
+      address.setStreet(xAction.getAddress().getStreet());
+      address.setBuildingno(xAction.getAddress().getBuildingno());
+      address.setCity(xAction.getAddress().getCity());
+      address.setCounty(xAction.getAddress().getCounty());
+      address.setCountry(xAction.getAddress().getCountry());
+      address.setPostcode(xAction.getAddress().getPostcode());
+      address.setLocation(xAction.getAddress().getLocation());
+      address = this.addressService.create(address);
+
+      privateinfo.setAddress(address);
+    }
     privateinfo.setVilla(villa);
 
     villa.setPublicinfo(publicinfo);
     villa.setPrivateinfo(privateinfo);
-    villa.setOwner(owner);
 
     VillaPricingSchema pricing = new VillaPricingSchema();
     pricing.setVilla(villa);
@@ -104,6 +122,25 @@ public class VillaController {
     villa.setCreatedby(sysAdminUser);
 
     villa = this.villaService.create(villa);
+
+    VillaAdminUser owner = this.villaAdminUserService.getByLogin(xAction.getOwneremail());
+    if (owner == null) {
+      if (xAction.getOwneremail() == null) {
+        throw new BadApiRequestException("Owner Email is required", "400#0012");
+      }
+      owner = this.villaOwnerRegistrationService.startVillaOwnerRegistration(
+          xAction.getOwneremail(),
+          xAction.getOwnerfirstname(),
+          xAction.getOwnermiddlename(),
+          xAction.getOwnerlastname(),
+          xAction.getOwnerdisplayname(),
+          xAction.getOwnerphonenumber(),
+          xAction.getOwneremail(),
+          villa);
+
+      villa.setOwner(owner);
+      villa = this.villaService.create(villa);
+    }
 
     return new GenericApiResponse<>(
         HttpStatus.OK.value(),

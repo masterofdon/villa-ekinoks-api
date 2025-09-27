@@ -39,7 +39,8 @@ public class AuthController {
 
     AppUser appUser = this.appUserService.getByLogin(xAction.getLogin());
 
-    if (appUser == null || this.bCryptPasswordEncoder.matches(xAction.getPassword(), appUser.getPassword()) == false) {
+    if (appUser == null || this.bCryptPasswordEncoder.matches(xAction.getPassword(),
+        appUser.getPassword()) == false) {
       AppUserLogin_WC_MLS_XAction_Response response = new AppUserLogin_WC_MLS_XAction_Response();
       response.setAckid("FAIL");
       response.setRequestid("401#9001");

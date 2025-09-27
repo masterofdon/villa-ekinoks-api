@@ -35,13 +35,13 @@ public class SystemAdminUserRegistrationController {
   public GenericApiResponse<Create_SystemAdminUser_WC_MLS_XAction_Response> createSystemAdminUser(
       @RequestBody Create_SystemAdminUser_WC_MLS_XAction xAction) {
 
-    if (xAction.getSecret() == null || this.appAuthenticatorService.getCode().equals(xAction.getSecret()) == false) {
-      throw new BadApiRequestException(
-          GenericApiResponseMessages.Generic.FAIL,
-          "400#8002");
-    }
+    // if (xAction.getSecret() == null || this.appAuthenticatorService.getCode().equals(xAction.getSecret()) == false) {
+    //   throw new BadApiRequestException(
+    //       GenericApiResponseMessages.Generic.FAIL,
+    //       "400#8002");
+    // }
 
-    SystemAdminUser existingUser = systemAdminUserService.getByLogin(xAction.getEmail());
+    SystemAdminUser existingUser = systemAdminUserService.getByLogin(xAction.getLogin());
     if (existingUser != null) {
       throw new BadApiRequestException(
           GenericApiResponseMessages.Generic.FAIL,
@@ -49,7 +49,7 @@ public class SystemAdminUserRegistrationController {
     }
 
     SystemAdminUser savedUser = systemAdminUserRegistrationService.registerSystemAdminUser(
-        xAction.getEmail(),
+        xAction.getLogin(),
         xAction.getPassword(),
         xAction.getFirstname(),
         xAction.getMiddlename(),

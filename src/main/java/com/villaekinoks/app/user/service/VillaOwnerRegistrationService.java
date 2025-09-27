@@ -11,6 +11,7 @@ import com.villaekinoks.app.user.UserStatusSet;
 import com.villaekinoks.app.user.VerificationStatus;
 import com.villaekinoks.app.user.VillaAdminUser;
 import com.villaekinoks.app.utils.TimeUtils;
+import com.villaekinoks.app.villa.Villa;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,8 @@ public class VillaOwnerRegistrationService {
       String lastname,
       String displayname,
       String phonenumber,
-      String email) {
+      String email,
+      Villa villa) {
 
     VillaAdminUser owner = new VillaAdminUser();
     owner.setLogin(email);
@@ -57,6 +59,8 @@ public class VillaOwnerRegistrationService {
     timeStamps.setUser(owner);
 
     owner.setTimestamps(timeStamps);
+
+    owner.setVilla(villa);
 
     return this.villaAdminUserService.create(owner);
   }
