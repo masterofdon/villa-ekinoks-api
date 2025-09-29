@@ -28,9 +28,11 @@ import com.villaekinoks.app.villa.VillaPublicInfo;
 import com.villaekinoks.app.villa.response.Create_Villa_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Get_Villa_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_PricingRange_WC_MLS_XAction_Response;
+import com.villaekinoks.app.villa.response.Update_Villa_PrivateInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PublicInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villa.xaction.Create_Villa_WC_MLS_XAction;
+import com.villaekinoks.app.villa.xaction.Update_Villa_PrivateInfo_WC_MLS_XAction;
 import com.villaekinoks.app.villa.xaction.Update_Villa_PublicInfo_WC_MLS_XAction;
 import com.villaekinoks.app.villapricing.VillaPricingSchema;
 import com.villaekinoks.app.villapricing.service.PricingRangeUtilService;
@@ -189,6 +191,47 @@ public class VillaController {
         GenericApiResponseMessages.Generic.SUCCESS,
         GenericApiResponseCodes.VillaController.UPDATE_VILLA_SUCCESS,
         new Update_Villa_PublicInfo_WC_MLS_XAction_Response(villa.getId()));
+  }
+
+  @PutMapping("/{id}/private-info")
+  public GenericApiResponse<Update_Villa_PrivateInfo_WC_MLS_XAction_Response> updateVillaPrivateinfo(
+      @PathVariable String id, @RequestBody Update_Villa_PrivateInfo_WC_MLS_XAction xAction) {
+
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (!(principal instanceof SystemAdminUser)) {
+      throw new NotAuthorizedException("User Not Authorized", "401#0002");
+    }
+
+    Villa villa = this.villaService.getById(id);
+    if (villa == null) {
+      throw new NotFoundException("Villa Not Found", "404#0011");
+    }
+    VillaPrivateInfo privateinfo = villa.getPrivateinfo();
+
+    if (xAction.getAddress() != null) {
+      Address address = privateinfo.getAddress();
+      if (address == null) {
+        address = new Address();
+      }
+      address.setStreet(xAction.getAddress().getStreet());
+      address.setBuildingno(xAction.getAddress().getBuildingno());
+      address.setCity(xAction.getAddress().getCity());
+      address.setCounty(xAction.getAddress().getCounty());
+      address.setCountry(xAction.getAddress().getCountry());
+      address.setPostcode(xAction.getAddress().getPostcode());
+      address.setLocation(xAction.getAddress().getLocation());
+      address = this.addressService.create(address);
+
+      privateinfo.setAddress(address);
+    }
+
+    this.villaService.create(villa);
+
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        GenericApiResponseCodes.VillaController.UPDATE_VILLA_SUCCESS,
+        new Update_Villa_PrivateInfo_WC_MLS_XAction_Response(villa.getId()));
   }
 
   @GetMapping("/{id}/pricing-schema")

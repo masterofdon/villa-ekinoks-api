@@ -8,10 +8,13 @@ import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,9 +31,19 @@ public class VillaBooking {
   @JoinColumn(name = "villa_id", nullable = false)
   private Villa villa;
 
+  @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+  private VillaBookingTimestamps timestamps;
+
   private String startdate;
 
   private String enddate;
+
+  @Enumerated(EnumType.STRING)
+  private VillaBookingStatus status;
+
+  @ManyToOne
+  @JoinColumn(name = "inquiror_id")
+  private VillaBookingGuest inquiror;
 
   @OneToMany(mappedBy = "booking", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private Set<VillaBookingGuest> guests;

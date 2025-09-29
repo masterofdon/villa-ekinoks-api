@@ -22,4 +22,9 @@ public class GenericApiResponseCodes {
 
     public static final String CREATE_USER_SUCCESS = "201#1000";
   }
+
+  public static class VillaOwnerUserRegistrationController {
+
+    public static final String UPDATE_VILLAOWNERUSER_PASSWORD_SUCCESS = "200#3001";
+  }
 }
