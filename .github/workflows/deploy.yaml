@@ -23,7 +23,7 @@ env:
 
 jobs:
   DockerHub:
-    runs-on: ekinoks-webapp
+    runs-on: villa-ekinoks-api
     environment:
       name: ${{ inputs.env }}
 

@@ -1,6 +1,8 @@
 FROM maven:3.9.8-eclipse-temurin-22
+
 COPY config/. /opt/app/.
 COPY app.jar /opt/app/app.jar
+COPY keystore.p12 /opt/app/keystore.p12
 
 ENV SPRING_PROFILES_ACTIVE=production
 ENV PROFILE=production

@@ -23,7 +23,7 @@ env:
 
 jobs:
   Maven:
-    runs-on: ekinoks-webapp
+    runs-on: villa-ekinoks-api
     environment:
       name: ${{ inputs.env }}
 
@@ -58,5 +58,6 @@ jobs:
           rm -rf /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
           mkdir -p /opt/app/${{ inputs.repo }}/${{ inputs.branch }}
           mv Dockerfile /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
+          cp /opt/certs/keystore.p12 /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/keystore.p12
           mv config/ /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/
           mv target/*.jar /opt/app/${{ inputs.repo }}/${{ inputs.branch }}/app.jar

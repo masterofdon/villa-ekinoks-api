@@ -41,6 +41,11 @@ spring:
 
 server:
   port: 8080
+  ssl:
+    key-store: /opt/app/keystore.p12
+    key-store-password: pED18ggA!
+    keyStoreType: PKCS12
+    keyAlias: villa-ekinoks-api
 
 management:
   endpoints:
