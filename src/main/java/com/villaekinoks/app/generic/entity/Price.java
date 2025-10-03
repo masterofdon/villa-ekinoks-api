@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Price {
-  
-  private Double amount;
+
+  private String amount;
 
   @Enumerated(EnumType.STRING)
   private Currency currency;

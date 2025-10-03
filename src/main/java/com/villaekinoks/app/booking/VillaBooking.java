@@ -4,12 +4,15 @@ import java.util.Set;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.villaekinoks.app.payment.Payment;
+import com.villaekinoks.app.user.VillaGuestUser;
 import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -43,8 +46,15 @@ public class VillaBooking {
 
   @ManyToOne
   @JoinColumn(name = "inquiror_id")
-  private VillaBookingGuest inquiror;
+  private VillaGuestUser inquiror;
+
+  @ManyToOne
+  @JoinColumn(name = "booking_payment_id")
+  private Payment bookingpayment;
 
   @OneToMany(mappedBy = "booking", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private Set<VillaBookingGuest> guests;
+
+  @OneToMany(mappedBy = "booking", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, orphanRemoval = true)
+  private Set<VillaBookingAdditionalService> services;
 }

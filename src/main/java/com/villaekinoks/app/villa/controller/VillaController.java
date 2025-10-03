@@ -20,6 +20,7 @@ import com.villaekinoks.app.generic.entity.Address;
 import com.villaekinoks.app.generic.service.AddressService;
 import com.villaekinoks.app.user.SystemAdminUser;
 import com.villaekinoks.app.user.VillaAdminUser;
+import com.villaekinoks.app.user.VillaAdminUserRegistrationStatus;
 import com.villaekinoks.app.user.service.VillaAdminUserService;
 import com.villaekinoks.app.user.service.VillaOwnerRegistrationService;
 import com.villaekinoks.app.villa.Villa;
@@ -140,6 +141,7 @@ public class VillaController {
           xAction.getOwneremail(),
           villa);
 
+      owner.setRegistrationstatus(VillaAdminUserRegistrationStatus.CREATED);
       villa.setOwner(owner);
       villa = this.villaService.create(villa);
     }
@@ -263,16 +265,17 @@ public class VillaController {
   public GenericApiResponse<Update_PricingRange_WC_MLS_XAction_Response> updatePricingRangeForVilla(
       @PathVariable String id,
       @RequestBody Update_PricingRange_WC_MLS_XAction xAction) {
-    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    if (!(principal instanceof VillaAdminUser)) {
-      throw new NotAuthorizedException("User Not Authorized", "401#0002");
-    }
+    // Object principal =
+    // SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    // if (!(principal instanceof VillaAdminUser)) {
+    // throw new NotAuthorizedException("User Not Authorized", "401#0002");
+    // }
 
-    VillaAdminUser villaAdminUser = (VillaAdminUser) principal;
+    // VillaAdminUser villaAdminUser = (VillaAdminUser) principal;
 
-    if (villaAdminUser.getVilla().getId().equals(id) == false) {
-      throw new NotAuthorizedException("User Not Authorized", "401#0002");
-    }
+    // if (villaAdminUser.getVilla().getId().equals(id) == false) {
+    // throw new NotAuthorizedException("User Not Authorized", "401#0002");
+    // }
 
     Villa villa = this.villaService.getById(id);
     if (villa == null) {
@@ -288,6 +291,8 @@ public class VillaController {
     }
 
     this.pricingRangeUtilService.processPricingRangeUpdate(pricing, xAction);
+
+    // pricing = this.villaPricingSchemaService.create(pricing);
 
     return new GenericApiResponse<>(
         HttpStatus.OK.value(),

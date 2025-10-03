@@ -5,11 +5,9 @@ import java.util.Set;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.villaekinoks.app.generic.entity.Price;
 import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -32,9 +30,6 @@ public class VillaPricingSchema {
   @JoinColumn(name = "villa_id", nullable = false)
   @JsonIgnore
   private Villa villa;
-
-  @Embedded
-  private Price pricepernight;
 
   @OneToMany(mappedBy = "villapricingschema", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
   private Set<PricingRange> pricingranges;

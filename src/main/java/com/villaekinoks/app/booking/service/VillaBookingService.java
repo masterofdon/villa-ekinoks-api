@@ -1,7 +1,8 @@
 package com.villaekinoks.app.booking.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,17 @@ public class VillaBookingService {
     return villaBookingRepository.findById(id).orElse(null);
   }
 
-  public Page<VillaBooking> getAll(String[] villaids, Pageable pageable) {
-    return villaBookingRepository.findAll(villaBookingSpecification.conditionalSearch(villaids, null), pageable);
+  public Page<VillaBooking> getAll(String[] villaids, String startdate, String enddate, String query,
+      Pageable pageable) {
+    return villaBookingRepository
+        .findAll(villaBookingSpecification.conditionalSearch(villaids, startdate, enddate, query), pageable);
   }
 
   public VillaBooking create(VillaBooking villaBooking) {
     return villaBookingRepository.save(villaBooking);
+  }
+
+  public List<VillaBooking> getVillaForDateClash(String villaid, String startdate, String enddate) {
+    return villaBookingRepository.findAll(villaBookingSpecification.hasDateClashForVilla(villaid, startdate, enddate));
   }
 }

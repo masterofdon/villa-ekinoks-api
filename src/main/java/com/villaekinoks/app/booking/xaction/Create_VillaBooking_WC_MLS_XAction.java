@@ -22,7 +22,10 @@ public class Create_VillaBooking_WC_MLS_XAction {
 
   private String inquiror_lastname;
 
+  private String inquiror_identitynumber;
+
   private String inquiror_email;
 
   private String inquiror_phonenumber;
+
 }
