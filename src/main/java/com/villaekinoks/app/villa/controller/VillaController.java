@@ -238,16 +238,6 @@ public class VillaController {
 
   @GetMapping("/{id}/pricing-schema")
   public GenericApiResponse<VillaPricingSchema> getVillaPricingSchema(@PathVariable String id) {
-    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    if (!(principal instanceof VillaAdminUser)) {
-      throw new NotAuthorizedException("User Not Authorized", "401#0002");
-    }
-
-    VillaAdminUser villaAdminUser = (VillaAdminUser) principal;
-
-    if (villaAdminUser.getVilla().getId().equals(id) == false) {
-      throw new NotAuthorizedException("User Not Authorized", "401#0002");
-    }
 
     Villa villa = this.villaService.getById(id);
     if (villa == null) {

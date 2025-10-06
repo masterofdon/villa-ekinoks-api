@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                   baseUrl + "/app-files/o/**",
                   baseUrl + "/verification-pair-controller/**",
                   baseUrl + "/villa-calendars/**",
+                  baseUrl + "/villas/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
                   baseUrl + "/app-users/forgot-password/**",
                   baseUrl + "/app-users/forget-password/verifications/**").permitAll();
