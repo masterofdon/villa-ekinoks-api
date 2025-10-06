@@ -13,6 +13,7 @@ import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.generic.model.TokenizedUser;
 import com.villaekinoks.app.user.AppUser;
 import com.villaekinoks.app.user.service.AppUserService;
+import com.villaekinoks.app.utils.TimeUtils;
 import com.villaekinoks.app.verification.VerificationPair;
 import com.villaekinoks.app.verification.VerificationPairStatus;
 import com.villaekinoks.app.verification.service.VerificationPairService;
@@ -64,7 +65,7 @@ public class VerificationPairController {
           "401#9003");
     }
 
-    if (vPair.getExpirationdate() < System.currentTimeMillis()) {
+    if (vPair.getExpirationdate() < TimeUtils.tsInstantNow().toEpochMilli()) {
       throw new NotAuthorizedException(
           GenericApiResponseMessages.Generic.FAIL,
           "401#9004");

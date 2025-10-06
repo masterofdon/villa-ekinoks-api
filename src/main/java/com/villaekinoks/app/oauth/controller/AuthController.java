@@ -52,7 +52,7 @@ public class AuthController {
     VerificationPair vPair = new VerificationPair();
     vPair.setUserid(appUser.getId());
     vPair.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
-    vPair.setExpirationdate(TimeUtils.tsInstantNow().plusSeconds(3600).toEpochMilli());
+    vPair.setExpirationdate(TimeUtils.tsInstantNow().toEpochMilli() + (5 * 60 * 1000)); // 5 minutes
     vPair.setStatus(VerificationPairStatus.PENDING);
     vPair.setVerificationcode(RandomizerUtils.getRandomNumeric(6));
 
