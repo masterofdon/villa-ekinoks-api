@@ -40,7 +40,7 @@ spring:
     allow-circular-references: true
 
 server:
-  port: 8080
+  port: 443
   ssl:
     key-store: /opt/app/keystore.p12
     key-store-password: pED18ggA!
