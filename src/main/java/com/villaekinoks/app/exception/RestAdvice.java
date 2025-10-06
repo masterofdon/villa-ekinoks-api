@@ -11,13 +11,22 @@ import com.villaekinoks.app.generic.api.GenericApiResponse;
 public class RestAdvice {
 
   @ExceptionHandler(NotFoundException.class)
-  public ResponseEntity<String> handleException(NotFoundException ex) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  public ResponseEntity<GenericApiResponse<Void>> handleException(NotFoundException ex) {
+    return new ResponseEntity<>(new GenericApiResponse<>(
+        HttpStatus.UNAUTHORIZED.value(),
+        ex.getMessage(),
+        ex.getResponsecode()),
+        HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(NotAuthorizedException.class)
-  public ResponseEntity<String> handleException(NotAuthorizedException ex) {
-    return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+  public ResponseEntity<GenericApiResponse<Void>> handleException(NotAuthorizedException ex) {
+    return new ResponseEntity<>(
+        new GenericApiResponse<>(
+            HttpStatus.UNAUTHORIZED.value(),
+            ex.getMessage(),
+            ex.getResponsecode()),
+        HttpStatus.UNAUTHORIZED);
   }
 
   @ExceptionHandler(BadApiRequestException.class)
