@@ -26,7 +26,6 @@ public class SecurityConfiguration {
 
   private final AuthenticationProvider authenticationProvider;
 
-  
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -40,6 +39,7 @@ public class SecurityConfiguration {
                   baseUrl + "/verification-pair-controller/**",
                   baseUrl + "/villa-calendars/**",
                   baseUrl + "/villas/**",
+                  baseUrl + "/availability-check-controller/check-villa-availability/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
                   baseUrl + "/app-users/forgot-password/**",
                   baseUrl + "/app-users/forget-password/verifications/**").permitAll();
