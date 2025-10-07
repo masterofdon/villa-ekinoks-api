@@ -13,6 +13,8 @@ public class DateAvailability {
 
   private String date;
 
+  private DateAvailabilityStatus status;
+
   private Boolean available;
 
   private Price price;

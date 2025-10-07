@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.availability.response.Get_AvailabilityCheck_XAction_Response;
 import com.villaekinoks.app.availability.view.DateAvailability;
+import com.villaekinoks.app.availability.view.DateAvailabilityStatus;
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.exception.NotFoundException;
@@ -308,8 +309,11 @@ public class AvailabilityCheckController {
       // Set the date
       dateAvailability.setDate(dateString);
       
-      // Check if this date is available (no booking conflicts)
-      boolean isAvailable = true;
+      // Get pricing for this date first
+      PricingRange pricingRange = pricingRangeService.getVillaPriceInDate(villaId, dateString);
+      
+      // Check if this date has a booking conflict
+      boolean hasBookingConflict = false;
       if (bookings != null) {
         for (VillaBooking booking : bookings) {
           LocalDate bookingStart = LocalDate.parse(booking.getStartdate(), formatter);
@@ -317,25 +321,40 @@ public class AvailabilityCheckController {
           
           // Check if current date falls within this booking
           if (!currentDate.isBefore(bookingStart) && currentDate.isBefore(bookingEnd)) {
-            isAvailable = false;
+            hasBookingConflict = true;
             break;
           }
         }
       }
       
-      // Get pricing for this date
-      PricingRange pricingRange = pricingRangeService.getVillaPriceInDate(villaId, dateString);
+      // Set status and availability based on pricing and booking conflicts
+      DateAvailabilityStatus status;
+      boolean isAvailable;
+      
       if (pricingRange != null && pricingRange.getPricepernight() != null) {
+        // There is pricing for this date
         // Create a copy of the price to avoid modifying the original
         Price price = new Price();
         price.setAmount(pricingRange.getPricepernight().getAmount());
         price.setCurrency(pricingRange.getPricepernight().getCurrency());
         dateAvailability.setPrice(price);
+        
+        if (hasBookingConflict) {
+          // Has pricing but already booked
+          status = DateAvailabilityStatus.BOOKED;
+          isAvailable = false;
+        } else {
+          // Has pricing and no booking conflict
+          status = DateAvailabilityStatus.AVAILABLE;
+          isAvailable = true;
+        }
       } else {
-        // If there's no pricing, the date is not available
+        // No pricing for this date
+        status = DateAvailabilityStatus.CLOSED;
         isAvailable = false;
       }
       
+      dateAvailability.setStatus(status);
       dateAvailability.setAvailable(isAvailable);
       
       dateAvailabilities.add(dateAvailability);
