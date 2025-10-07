@@ -2,6 +2,7 @@ package com.villaekinoks.app.availability.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -11,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.availability.response.Get_AvailabilityCheck_XAction_Response;
+import com.villaekinoks.app.availability.view.DateAvailability;
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
+import com.villaekinoks.app.generic.entity.Price;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villapricing.PricingRange;
@@ -52,12 +55,16 @@ public class AvailabilityCheckController {
     // Check if pricing is available for all dates in the requested range
     boolean hasPricingForAllDates = checkPricingAvailability(villaid, checkoutStartDate, checkoutEndDate);
 
+    // Build date availabilities for the requested range
+    List<DateAvailability> dateAvailabilities = buildDateAvailabilities(villaid, checkoutStartDate, checkoutEndDate, bookings);
+
     if (bookings != null && bookings.size() > 0) {
       // There are bookings in the date range, so not all dates are available
       // Find alternative date ranges with the same length
 
       Get_AvailabilityCheck_XAction_Response response = new Get_AvailabilityCheck_XAction_Response();
       response.setAllavailable(false);
+      response.setDateavailabilities(dateAvailabilities);
 
       // Try to find alternative dates (considering both booking conflicts and pricing
       // availability)
@@ -78,6 +85,7 @@ public class AvailabilityCheckController {
       // No booking conflicts but pricing is not available for all dates
       Get_AvailabilityCheck_XAction_Response response = new Get_AvailabilityCheck_XAction_Response();
       response.setAllavailable(false);
+      response.setDateavailabilities(dateAvailabilities);
 
       // Try to find alternative dates with both available booking slots and pricing
       String[] alternativeDates = findAlternativeDateRangeWithPricing(villaid, checkoutStartDate, checkoutEndDate,
@@ -97,6 +105,7 @@ public class AvailabilityCheckController {
       // No bookings in the date range and pricing is available for all dates
       Get_AvailabilityCheck_XAction_Response response = new Get_AvailabilityCheck_XAction_Response();
       response.setAllavailable(true);
+      response.setDateavailabilities(dateAvailabilities);
       return new GenericApiResponse<>(
           HttpStatus.OK.value(),
           GenericApiResponseMessages.Generic.SUCCESS,
@@ -263,6 +272,61 @@ public class AvailabilityCheckController {
     }
 
     return true; // All dates have pricing
+  }
+
+  /**
+   * Builds a list of DateAvailability objects for the given date range.
+   * Each date includes availability status and pricing information.
+   * 
+   * @param villaId The villa ID to check
+   * @param startDate The start date of the range
+   * @param endDate The end date of the range  
+   * @param bookings List of existing bookings that may conflict
+   * @return List of DateAvailability objects with availability and pricing info
+   */
+  private List<DateAvailability> buildDateAvailabilities(String villaId, LocalDate startDate, LocalDate endDate, List<VillaBooking> bookings) {
+    List<DateAvailability> dateAvailabilities = new ArrayList<>();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    
+    LocalDate currentDate = startDate;
+    while (currentDate.isBefore(endDate)) {
+      DateAvailability dateAvailability = new DateAvailability();
+      String dateString = currentDate.format(formatter);
+      
+      // Set the date
+      dateAvailability.setDate(dateString);
+      
+      // Check if this date is available (no booking conflicts)
+      boolean isAvailable = true;
+      if (bookings != null) {
+        for (VillaBooking booking : bookings) {
+          LocalDate bookingStart = LocalDate.parse(booking.getStartdate(), formatter);
+          LocalDate bookingEnd = LocalDate.parse(booking.getEnddate(), formatter);
+          
+          // Check if current date falls within this booking
+          if (!currentDate.isBefore(bookingStart) && currentDate.isBefore(bookingEnd)) {
+            isAvailable = false;
+            break;
+          }
+        }
+      }
+      dateAvailability.setAvailable(isAvailable);
+      
+      // Get pricing for this date
+      PricingRange pricingRange = pricingRangeService.getVillaPriceInDate(villaId, dateString);
+      if (pricingRange != null && pricingRange.getPricepernight() != null) {
+        // Create a copy of the price to avoid modifying the original
+        Price price = new Price();
+        price.setAmount(pricingRange.getPricepernight().getAmount());
+        price.setCurrency(pricingRange.getPricepernight().getCurrency());
+        dateAvailability.setPrice(price);
+      }
+      
+      dateAvailabilities.add(dateAvailability);
+      currentDate = currentDate.plusDays(1);
+    }
+    
+    return dateAvailabilities;
   }
 
   /**
