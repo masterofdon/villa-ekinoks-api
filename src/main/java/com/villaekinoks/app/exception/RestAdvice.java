@@ -13,7 +13,7 @@ public class RestAdvice {
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<GenericApiResponse<Void>> handleException(NotFoundException ex) {
     return new ResponseEntity<>(new GenericApiResponse<>(
-        HttpStatus.UNAUTHORIZED.value(),
+        HttpStatus.NOT_FOUND.value(),
         ex.getMessage(),
         ex.getResponsecode()),
         HttpStatus.NOT_FOUND);
