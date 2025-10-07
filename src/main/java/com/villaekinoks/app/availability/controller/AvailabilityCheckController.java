@@ -310,7 +310,6 @@ public class AvailabilityCheckController {
           }
         }
       }
-      dateAvailability.setAvailable(isAvailable);
       
       // Get pricing for this date
       PricingRange pricingRange = pricingRangeService.getVillaPriceInDate(villaId, dateString);
@@ -320,7 +319,12 @@ public class AvailabilityCheckController {
         price.setAmount(pricingRange.getPricepernight().getAmount());
         price.setCurrency(pricingRange.getPricepernight().getCurrency());
         dateAvailability.setPrice(price);
+      } else {
+        // If there's no pricing, the date is not available
+        isAvailable = false;
       }
+      
+      dateAvailability.setAvailable(isAvailable);
       
       dateAvailabilities.add(dateAvailability);
       currentDate = currentDate.plusDays(1);
