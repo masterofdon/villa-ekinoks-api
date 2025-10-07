@@ -52,11 +52,18 @@ public class AvailabilityCheckController {
 
     List<VillaBooking> bookings = this.villaBookingService.getVillaForDateClash(villaid, startdate, enddate);
 
+    // Get additional bookings for the extended range (3 days before and after)
+    LocalDate extendedStartDate = checkoutStartDate.minusDays(3);
+    LocalDate extendedEndDate = checkoutEndDate.plusDays(3);
+    String extendedStartDateStr = extendedStartDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    String extendedEndDateStr = extendedEndDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    List<VillaBooking> extendedBookings = this.villaBookingService.getVillaForDateClash(villaid, extendedStartDateStr, extendedEndDateStr);
+
     // Check if pricing is available for all dates in the requested range
     boolean hasPricingForAllDates = checkPricingAvailability(villaid, checkoutStartDate, checkoutEndDate);
 
-    // Build date availabilities for the requested range
-    List<DateAvailability> dateAvailabilities = buildDateAvailabilities(villaid, checkoutStartDate, checkoutEndDate, bookings);
+    // Build date availabilities for the extended range (including 3 days before and after)
+    List<DateAvailability> dateAvailabilities = buildDateAvailabilities(villaid, checkoutStartDate, checkoutEndDate, extendedBookings);
 
     if (bookings != null && bookings.size() > 0) {
       // There are bookings in the date range, so not all dates are available
@@ -277,6 +284,7 @@ public class AvailabilityCheckController {
   /**
    * Builds a list of DateAvailability objects for the given date range.
    * Each date includes availability status and pricing information.
+   * Includes 3 preceding and 3 succeeding days around the requested range.
    * 
    * @param villaId The villa ID to check
    * @param startDate The start date of the range
@@ -288,8 +296,12 @@ public class AvailabilityCheckController {
     List<DateAvailability> dateAvailabilities = new ArrayList<>();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     
-    LocalDate currentDate = startDate;
-    while (currentDate.isBefore(endDate)) {
+    // Extend the range to include 3 days before and 3 days after
+    LocalDate extendedStartDate = startDate.minusDays(3);
+    LocalDate extendedEndDate = endDate.plusDays(3);
+    
+    LocalDate currentDate = extendedStartDate;
+    while (currentDate.isBefore(extendedEndDate)) {
       DateAvailability dateAvailability = new DateAvailability();
       String dateString = currentDate.format(formatter);
       
