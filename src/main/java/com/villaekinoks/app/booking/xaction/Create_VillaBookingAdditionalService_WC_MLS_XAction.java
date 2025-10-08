@@ -12,5 +12,5 @@ public class Create_VillaBookingAdditionalService_WC_MLS_XAction {
 
   private String servicableitemid;
 
-  private String quantity;
+  private Integer quantity;
 }
