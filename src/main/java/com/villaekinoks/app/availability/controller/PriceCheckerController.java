@@ -31,7 +31,7 @@ import com.villaekinoks.app.villapricing.service.PricingRangeService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/price-cheker")
+@RequestMapping("/api/v1/price-checker")
 @RequiredArgsConstructor
 public class PriceCheckerController {
 
