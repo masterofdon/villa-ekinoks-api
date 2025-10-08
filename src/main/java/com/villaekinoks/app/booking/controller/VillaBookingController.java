@@ -28,6 +28,7 @@ import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.booking.view.VillaBookingSummaryView;
 import com.villaekinoks.app.booking.xaction.Create_BookingPayment_WC_MLS_XAction;
 import com.villaekinoks.app.booking.xaction.Create_VillaBooking_WC_MLS_XAction;
+import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
@@ -68,6 +69,7 @@ public class VillaBookingController {
   private final PaymentService paymentService;
 
   @GetMapping
+  @VillaEkinoksAuthorized
   public GenericApiResponse<Page<VillaBookingSummaryView>> getVillaBookings(
       @RequestParam String villaid,
       @RequestParam String startdate,

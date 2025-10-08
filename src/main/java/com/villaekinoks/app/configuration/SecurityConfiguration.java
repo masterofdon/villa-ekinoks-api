@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                   baseUrl + "/app-files/o/**",
                   baseUrl + "/verification-pair-controller/**",
                   baseUrl + "/villa-calendars/**",
+                  baseUrl + "/villa-bookings/**",
                   baseUrl + "/villas/**",
                   baseUrl + "/availability-check-controller/check-villa-availability/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
