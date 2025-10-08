@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
+import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.servicableitem.ServicableItem;
 import com.villaekinoks.app.servicableitem.response.Create_ServicableItem_WC_MLS_XAction_Response;
 import com.villaekinoks.app.servicableitem.service.ServicableItemService;
 import com.villaekinoks.app.servicableitem.xaction.Create_ServiceableItem_WC_MLS_XAction;
+import com.villaekinoks.app.villa.Villa;
+import com.villaekinoks.app.villa.service.VillaService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class ServicableItemController {
 
   private final ServicableItemService servicableItemService;
+
+  private final VillaService villaService;
 
   @GetMapping
   public GenericApiResponse<Page<ServicableItem>> getAllServicableItems(
@@ -39,13 +45,26 @@ public class ServicableItemController {
   }
 
   @PostMapping
+  @VillaEkinoksAuthorized
   public GenericApiResponse<Create_ServicableItem_WC_MLS_XAction_Response> createServicableItem(
       @RequestBody Create_ServiceableItem_WC_MLS_XAction xAction) {
+
+    if (xAction.getVillaid() == null) {
+      throw new NotFoundException(
+          "Villa ID must be provided");
+    }
+
+    Villa villa = this.villaService.getById(xAction.getVillaid());
+    if (villa == null) {
+      throw new NotFoundException(
+          "Villa not found");
+    }
 
     ServicableItem item = new ServicableItem();
     item.setName(xAction.getName());
     item.setDescription(xAction.getDescription());
     item.setIconlink(xAction.getIconlink());
+    item.setVilla(villa);
     item.setUnit(xAction.getUnit());
     item.setPrice(xAction.getPrice());
 

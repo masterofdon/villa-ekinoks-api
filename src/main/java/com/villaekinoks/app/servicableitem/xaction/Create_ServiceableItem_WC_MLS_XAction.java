@@ -11,6 +11,8 @@ import lombok.Setter;
 @Getter
 public class Create_ServiceableItem_WC_MLS_XAction {
 
+  private String villaid;
+
   private String name;
 
   private String description;

@@ -39,6 +39,7 @@ public class SecurityConfiguration {
                   baseUrl + "/verification-pair-controller/**",
                   baseUrl + "/villa-calendars/**",
                   baseUrl + "/villa-bookings/**",
+                  baseUrl + "/servicable-items/**",
                   baseUrl + "/villas/**",
                   baseUrl + "/availability-check-controller/check-villa-availability/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
