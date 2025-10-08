@@ -172,10 +172,10 @@ public class VillaBookingController {
       inquiror = this.villaGuestUserRegistrationService.registerNewUser(
           xAction.getInquiror_email(),
           xAction.getInquiror_email(),
-          xAction.getInquiror_identitynumber(),
           xAction.getInquiror_firstname(),
           xAction.getInquiror_middlename(),
           xAction.getInquiror_lastname(),
+          xAction.getInquiror_identitynumber(),
           xAction.getInquiror_email(),
           xAction.getInquiror_phonenumber());
     }
