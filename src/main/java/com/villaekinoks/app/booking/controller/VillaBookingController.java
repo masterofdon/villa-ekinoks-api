@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.VillaBookingStatus;
 import com.villaekinoks.app.booking.VillaBookingTimestamps;
@@ -174,7 +176,8 @@ public class VillaBookingController {
   @Transactional
   public GenericApiResponse<Create_BookingPayment_WC_MLS_XAction_Response> createPaymentForBooking(
       @PathVariable String id,
-      @RequestBody Create_BookingPayment_WC_MLS_XAction xAction) {
+      @RequestBody Create_BookingPayment_WC_MLS_XAction xAction,
+      HttpServletRequest request) {
 
     VillaBooking booking = this.villaBookingService.getById(id);
     if (booking == null) {
@@ -201,7 +204,6 @@ public class VillaBookingController {
       BigDecimal totalAmount = allDates.stream().reduce(BigDecimal.ZERO,
           (sum, pr) -> sum.add(new BigDecimal(pr.getPricepernight().getAmount())), BigDecimal::add);
       totalAmount = totalAmount.setScale(2);
-      System.out.println("Total Amount: " + totalAmount);
 
       payment.setAmount(totalAmount.toPlainString());
       payment.setCurrency(allDates.get(0).getPricepernight().getCurrency());
@@ -217,7 +219,7 @@ public class VillaBookingController {
           booking.getInquiror().getPersonalinfo().getPhonenumber(),
           booking.getInquiror().getPersonalinfo().getEmail(),
           booking.getInquiror().getIdentitynumber(),
-          xAction.getUserip(),
+          getClientIpAddress(request),
           xAction.getUseraddress(),
           xAction.getUsercity(),
           xAction.getUsercountry(),
@@ -260,5 +262,19 @@ public class VillaBookingController {
         GenericApiResponseMessages.Generic.SUCCESS,
         "201#40593",
         new Create_BookingPayment_WC_MLS_XAction_Response());
+  }
+
+  private String getClientIpAddress(HttpServletRequest request) {
+    String xForwardedFor = request.getHeader("X-Forwarded-For");
+    if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+      return xForwardedFor.split(",")[0].trim();
+    }
+    
+    String xRealIp = request.getHeader("X-Real-IP");
+    if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+      return xRealIp;
+    }
+    
+    return request.getRemoteAddr();
   }
 }
