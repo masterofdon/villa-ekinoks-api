@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.generic.api.GenericApiResponse;
@@ -26,8 +27,10 @@ public class ServicableItemController {
   private final ServicableItemService servicableItemService;
 
   @GetMapping
-  public GenericApiResponse<Page<ServicableItem>> getAllServicableItems(Pageable pageable) {
-    Page<ServicableItem> items = this.servicableItemService.getAll(pageable);
+  public GenericApiResponse<Page<ServicableItem>> getAllServicableItems(
+      @RequestParam String villaid,
+      Pageable pageable) {
+    Page<ServicableItem> items = this.servicableItemService.getAll(villaid, pageable);
     return new GenericApiResponse<>(
         HttpStatus.OK.value(),
         GenericApiResponseMessages.Generic.SUCCESS,

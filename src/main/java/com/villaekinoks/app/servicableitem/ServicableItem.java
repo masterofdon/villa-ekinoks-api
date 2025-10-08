@@ -2,11 +2,15 @@ package com.villaekinoks.app.servicableitem;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.villaekinoks.app.generic.entity.Price;
+import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +22,11 @@ public class ServicableItem {
   @Id
   @UuidGenerator
   private String id;
+
+  @ManyToOne
+  @JoinColumn(name = "villa_id", nullable = false)
+  @JsonIgnore
+  private Villa villa;
 
   private String name;
 

@@ -19,8 +19,8 @@ public class ServicableItemService {
     return this.servicableItemRepository.findById(id).orElse(null);
   }
 
-  public Page<ServicableItem> getAll(Pageable pageable) {
-    return this.servicableItemRepository.findAll(pageable);
+  public Page<ServicableItem> getAll(String villaid, Pageable pageable) {
+    return this.servicableItemRepository.findAllByVillaId(villaid, pageable);
   }
 
   public ServicableItem create(ServicableItem item) {

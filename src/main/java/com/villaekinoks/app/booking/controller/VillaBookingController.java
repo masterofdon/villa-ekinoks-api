@@ -28,6 +28,7 @@ import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.booking.view.VillaBookingSummaryView;
 import com.villaekinoks.app.booking.xaction.Create_BookingPayment_WC_MLS_XAction;
 import com.villaekinoks.app.booking.xaction.Create_VillaBooking_WC_MLS_XAction;
+import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
@@ -105,6 +106,24 @@ public class VillaBookingController {
 
     if (existingBookings != null && existingBookings.size() > 0) {
       throw new IllegalStateException("There is already an existing booking in the given date range.");
+    }
+
+    // Validate that all days in the booking period have pricing ranges
+    LocalDate startDate = LocalDate.parse(xAction.getStartdate(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+    LocalDate endDate = LocalDate.parse(xAction.getEnddate(), DateTimeFormatter.ofPattern("yyyyMMdd"));
+    
+    LocalDate currentDate = startDate;
+    while (currentDate.isBefore(endDate)) {
+      String dateString = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+      PricingRange pricingRange = this.pricingRangeService.getVillaPriceInDate(villa.getId(), dateString);
+      
+      if (pricingRange == null || pricingRange.getPricepernight() == null) {
+        throw new BadApiRequestException(
+          "No pricing available for date: " + dateString + ". Cannot create booking for dates without pricing.", 
+          "400#0013");
+      }
+      
+      currentDate = currentDate.plusDays(1);
     }
 
     VillaBooking booking = new VillaBooking();
