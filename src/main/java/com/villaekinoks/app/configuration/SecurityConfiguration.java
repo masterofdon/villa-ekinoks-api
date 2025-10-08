@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                   baseUrl + "/villa-bookings/**",
                   baseUrl + "/servicable-items/**",
                   baseUrl + "/villas/**",
+                  baseUrl + "/price-checker/check-item-prices/**",
                   baseUrl + "/availability-check-controller/check-villa-availability/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
                   baseUrl + "/app-users/forgot-password/**",
