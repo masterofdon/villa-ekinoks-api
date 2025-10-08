@@ -52,6 +52,8 @@ public class VillaBooking {
   @JoinColumn(name = "booking_payment_id")
   private Payment bookingpayment;
 
+  private Integer numberofguests;
+
   @OneToMany(mappedBy = "booking", cascade = CascadeType.REMOVE, orphanRemoval = true)
   private Set<VillaBookingGuest> guests;
 
