@@ -113,18 +113,18 @@ public class VillaBookingController {
     // Validate that all days in the booking period have pricing ranges
     LocalDate startDate = LocalDate.parse(xAction.getStartdate(), DateTimeFormatter.ofPattern("yyyyMMdd"));
     LocalDate endDate = LocalDate.parse(xAction.getEnddate(), DateTimeFormatter.ofPattern("yyyyMMdd"));
-    
+
     LocalDate currentDate = startDate;
     while (currentDate.isBefore(endDate)) {
       String dateString = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
       PricingRange pricingRange = this.pricingRangeService.getVillaPriceInDate(villa.getId(), dateString);
-      
+
       if (pricingRange == null || pricingRange.getPricepernight() == null) {
         throw new BadApiRequestException(
-          "No pricing available for date: " + dateString + ". Cannot create booking for dates without pricing.", 
-          "400#0013");
+            "No pricing available for date: " + dateString + ". Cannot create booking for dates without pricing.",
+            "400#0013");
       }
-      
+
       currentDate = currentDate.plusDays(1);
     }
 
@@ -133,6 +133,7 @@ public class VillaBookingController {
     booking.setStartdate(xAction.getStartdate());
     booking.setEnddate(xAction.getEnddate());
     booking.setStatus(VillaBookingStatus.PENDING);
+    booking.setNumberofguests(xAction.getNumberofguests());
 
     VillaBookingTimestamps timestamps = new VillaBookingTimestamps();
     timestamps.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());

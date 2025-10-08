@@ -12,6 +12,8 @@ public class Create_VillaBooking_WC_MLS_XAction {
 
   private String villaid;
 
+  private Integer numberofguests = -1;
+
   private String startdate;
 
   private String enddate;
