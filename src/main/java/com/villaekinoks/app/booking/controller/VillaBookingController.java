@@ -102,6 +102,19 @@ public class VillaBookingController {
         bookingsPage);
   }
 
+  @GetMapping("/{id}")
+  public GenericApiResponse<VillaBooking> getVillaBookingById(@PathVariable String id) {
+    VillaBooking booking = villaBookingService.getById(id);
+    if (booking == null) {
+      throw new NotFoundException();
+    }
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        "200#40590",
+        booking);
+  }
+
   @PostMapping
   @Transactional
   public GenericApiResponse<Create_VillaBooking_WC_MLS_XAction_Response> createVillaBooking(
