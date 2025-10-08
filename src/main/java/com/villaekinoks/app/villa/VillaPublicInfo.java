@@ -2,6 +2,8 @@ package com.villaekinoks.app.villa;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,5 +33,6 @@ public class VillaPublicInfo {
 
   @OneToOne
   @JoinColumn(name = "villa_id", nullable = false)
+  @JsonIgnore
   private Villa villa;
 }
