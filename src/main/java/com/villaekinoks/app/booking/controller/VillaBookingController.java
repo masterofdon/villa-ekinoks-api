@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -19,16 +20,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.villaekinoks.app.booking.VillaBooking;
+import com.villaekinoks.app.booking.VillaBookingAdditionalService;
 import com.villaekinoks.app.booking.VillaBookingStatus;
 import com.villaekinoks.app.booking.VillaBookingTimestamps;
 import com.villaekinoks.app.booking.response.Create_BookingPayment_WC_MLS_XAction_Response;
 import com.villaekinoks.app.booking.response.Create_VillaBooking_WC_MLS_XAction_Response;
+import com.villaekinoks.app.booking.service.VillaBookingAdditionalServiceService;
 import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.booking.view.VillaBookingSummaryView;
 import com.villaekinoks.app.booking.xaction.Create_BookingPayment_WC_MLS_XAction;
+import com.villaekinoks.app.booking.xaction.Create_VillaBookingAdditionalService_WC_MLS_XAction;
 import com.villaekinoks.app.booking.xaction.Create_VillaBooking_WC_MLS_XAction;
 import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.exception.BadApiRequestException;
@@ -39,6 +41,8 @@ import com.villaekinoks.app.payment.Payment;
 import com.villaekinoks.app.payment.PaymentStatus;
 import com.villaekinoks.app.payment.service.IyzicoPaymentProcessingService;
 import com.villaekinoks.app.payment.service.PaymentService;
+import com.villaekinoks.app.servicableitem.ServicableItem;
+import com.villaekinoks.app.servicableitem.service.ServicableItemService;
 import com.villaekinoks.app.user.VillaGuestUser;
 import com.villaekinoks.app.user.service.VillaGuestUserRegistrationService;
 import com.villaekinoks.app.user.service.VillaGuestUserService;
@@ -48,6 +52,7 @@ import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villapricing.PricingRange;
 import com.villaekinoks.app.villapricing.service.PricingRangeService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -69,6 +74,10 @@ public class VillaBookingController {
   private final VillaGuestUserRegistrationService villaGuestUserRegistrationService;
 
   private final PaymentService paymentService;
+
+  private final VillaBookingAdditionalServiceService villaBookingAdditionalServiceService;
+
+  private final ServicableItemService servicableItemService;
 
   @GetMapping
   @VillaEkinoksAuthorized
@@ -162,6 +171,21 @@ public class VillaBookingController {
 
     booking = this.villaBookingService.create(booking);
 
+    if (xAction.getAdditionalservices() != null) {
+      for (Create_VillaBookingAdditionalService_WC_MLS_XAction service : xAction.getAdditionalservices()) {
+        ServicableItem item = this.servicableItemService.getById(service.getServicableitemid());
+        if (item == null) {
+          throw new NotFoundException("Servicable item not found: " + service.getServicableitemid());
+        }
+        VillaBookingAdditionalService bookingService = new VillaBookingAdditionalService();
+        bookingService.setBooking(booking);
+        bookingService.setItem(item);
+        bookingService.setQuantity(service.getQuantity());
+        this.villaBookingAdditionalServiceService.create(bookingService);
+      }
+
+    }
+
     Create_VillaBooking_WC_MLS_XAction_Response response = new Create_VillaBooking_WC_MLS_XAction_Response();
     response.setId(booking.getId());
 
@@ -205,6 +229,20 @@ public class VillaBookingController {
           (sum, pr) -> sum.add(new BigDecimal(pr.getPricepernight().getAmount())), BigDecimal::add);
       totalAmount = totalAmount.setScale(2);
 
+      Set<VillaBookingAdditionalService> services = booking.getServices();
+      if (services != null && services.size() > 0) {
+        for (VillaBookingAdditionalService item : services) {
+          ServicableItem sItem = item.getItem();
+          if (sItem != null) {
+            BigDecimal itemTotal = new BigDecimal(sItem.getPrice().getAmount())
+                .multiply(new BigDecimal(item.getQuantity()));
+            itemTotal = itemTotal.setScale(2);
+            totalAmount = totalAmount
+                .add(itemTotal);
+          }
+        }
+      }
+
       payment.setAmount(totalAmount.toPlainString());
       payment.setCurrency(allDates.get(0).getPricepernight().getCurrency());
       payment.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
@@ -245,6 +283,11 @@ public class VillaBookingController {
       booking.setStatus(VillaBookingStatus.CONFIRMED);
       booking = this.villaBookingService.create(booking);
 
+      for (VillaBookingAdditionalService service : booking.getServices()) {
+        service.setPayment(payment);
+        this.villaBookingAdditionalServiceService.create(service);
+      }
+
       return new GenericApiResponse<>(
           HttpStatus.CREATED.value(),
           GenericApiResponseMessages.Generic.SUCCESS,
@@ -269,12 +312,12 @@ public class VillaBookingController {
     if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
       return xForwardedFor.split(",")[0].trim();
     }
-    
+
     String xRealIp = request.getHeader("X-Real-IP");
     if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
       return xRealIp;
     }
-    
+
     return request.getRemoteAddr();
   }
 }

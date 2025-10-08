@@ -35,5 +35,5 @@ public class VillaBookingAdditionalService {
   @JoinColumn(name = "payment_id")
   private Payment payment;
 
-  private String quantity;
+  private Integer quantity;
 }
