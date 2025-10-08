@@ -39,4 +39,8 @@ public class ServicableItem {
 
   private String unit;
 
+  private Integer minimum;
+
+  private Integer maximum;
+
 }

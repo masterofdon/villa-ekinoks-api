@@ -22,4 +22,8 @@ public class Create_ServiceableItem_WC_MLS_XAction {
   private String unit;
 
   private Price price;
+
+  private Integer minimum;
+
+  private Integer maximum;
 }

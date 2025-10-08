@@ -69,6 +69,8 @@ public class ServicableItemController {
     item.setVilla(villa);
     item.setUnit(xAction.getUnit());
     item.setPrice(xAction.getPrice());
+    item.setMaximum(xAction.getMaximum());
+    item.setMinimum(xAction.getMinimum());
 
     ServicableItem createdItem = this.servicableItemService.create(item);
     Create_ServicableItem_WC_MLS_XAction_Response response = new Create_ServicableItem_WC_MLS_XAction_Response();
