@@ -75,7 +75,7 @@ public class PriceCheckerController {
     // For additional services check all services inside the request
     ArrayList<PriceItem> services = new ArrayList<>();
     services.add(new PriceItem(
-        String.format("%s nights accommodation", allDates.size()),
+        "_accomodation",
         1,
         "night",
         new Price(rentAmount.toString(), xAction.getCurrency())));
