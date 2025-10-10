@@ -39,6 +39,21 @@ spring:
     allow-bean-definition-overriding: true
     allow-circular-references: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: info@villaekinoks.com
+    password: sfdrlzaqiskbenuq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
 server:
   port: 443
   ssl:
@@ -99,8 +114,8 @@ feign :
         
 email:
   gmail:
-    username: noreply@ditisklassikaal.nl
-    password: ywvvhhmkacnaietp
+    username: info@villaekinoks.com
+    password: sfdrlzaqiskbenuq
 
 mail-templates:
   path: mail-templates

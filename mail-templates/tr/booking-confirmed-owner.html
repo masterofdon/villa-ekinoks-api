@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Rezervasyon Onaylandı - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #27ae60;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .booking-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .guest-details {
+            background-color: #e8f8f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #27ae60;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>💰 Yeni Rezervasyon Onaylandı</h2>
+    </div>
+    
+    <div class="content">
+        <p>Sayın Mülk Sahibi,</p>
+        
+        <p>Harika haber! <strong>{{villaName}}</strong> için yeni onaylanmış bir rezervasyon aldınız.</p>
+        
+        <div class="booking-details">
+            <h3>📋 Rezervasyon Bilgileri</h3>
+            <p><strong>Rezervasyon No:</strong> {{bookingId}}</p>
+            <p><strong>Villa:</strong> {{villaName}}</p>
+            <p><strong>Giriş Tarihi:</strong> {{checkInDate}}</p>
+            <p><strong>Çıkış Tarihi:</strong> {{checkOutDate}}</p>
+            <p><strong>Misafir Sayısı:</strong> {{numberOfGuests}}</p>
+            <p class="amount"><strong>Toplam Tutar:</strong> {{totalAmount}} {{currency}}</p>
+        </div>
+        
+        <div class="guest-details">
+            <h3>👤 Misafir Bilgileri</h3>
+            <p><strong>Ad:</strong> {{guestName}}</p>
+            <p><strong>E-posta:</strong> {{guestEmail}}</p>
+            <p><strong>Telefon:</strong> {{guestPhone}}</p>
+        </div>
+        
+        <p><strong>Ödeme Durumu:</strong> ✅ Onaylandı ve işlendi</p>
+        
+        <p>Lütfen villanızın misafirlerinizin gelişi için hazır olduğundan emin olun. Misafirle doğrudan iletişim kurmanız gerekiyorsa, yukarıda sağlanan iletişim bilgilerini kullanabilirsiniz.</p>
+        
+        <a href="https://villaekinoks.com/owner/booking/{{bookingId}}" class="button">Rezervasyon Detaylarını Görüntüle</a>
+        
+        <p><strong>Sonraki Adımlar:</strong></p>
+        <ul>
+            <li>Villayı misafir gelişi için hazırlayın</li>
+            <li>Giriş lojistiğini koordine edin</li>
+            <li>Özel misafir taleplerini gözden geçirin</li>
+            <li>Yardıma ihtiyaç duyulursa destek ile iletişime geçin</li>
+        </ul>
+        
+        <p>Villa Ekinoks ailesinin bir parçası olduğunuz için teşekkür ederiz!</p>
+        
+        <p>Saygılarımızla,<br>
+        Villa Ekinoks Ekibi</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Bu otomatik bir bildirimdir. Destek için lütfen doğrudan bizimle iletişime geçin.</p>
+    </div>
+</body>
+</html>

@@ -37,6 +37,7 @@ import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
+import com.villaekinoks.app.mail.service.AsyncEmailService;
 import com.villaekinoks.app.payment.Payment;
 import com.villaekinoks.app.payment.PaymentStatus;
 import com.villaekinoks.app.payment.service.IyzicoPaymentProcessingService;
@@ -78,6 +79,8 @@ public class VillaBookingController {
   private final VillaBookingAdditionalServiceService villaBookingAdditionalServiceService;
 
   private final ServicableItemService servicableItemService;
+
+  private final AsyncEmailService asyncEmailService;
 
   @GetMapping
   @VillaEkinoksAuthorized
@@ -299,6 +302,28 @@ public class VillaBookingController {
       for (VillaBookingAdditionalService service : booking.getServices()) {
         service.setPayment(payment);
         this.villaBookingAdditionalServiceService.create(service);
+      }
+
+      // Send confirmation email to guest
+      try {
+        this.asyncEmailService.sendBookingPaymentSuccessEmailAsync(booking, "en");
+      } catch (Exception e) {
+        // Log error but don't fail the booking process
+        // Email sending should not affect the booking transaction
+      }
+
+      // Send notification email to villa owner
+      try {
+        if (booking.getVilla().getOwner() != null && 
+            booking.getVilla().getOwner().getPersonalinfo() != null && 
+            booking.getVilla().getOwner().getPersonalinfo().getEmail() != null) {
+          this.asyncEmailService.sendBookingConfirmedOwnerEmailAsync(
+              booking, 
+              booking.getVilla().getOwner().getPersonalinfo().getEmail(), 
+              "en");
+        }
+      } catch (Exception e) {
+        // Log error but don't fail the booking process
       }
 
       return new GenericApiResponse<>(
