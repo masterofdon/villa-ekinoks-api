@@ -24,6 +24,11 @@ public class VillaBookingService {
     return villaBookingRepository.findById(id).orElse(null);
   }
 
+  public Page<VillaBooking> getByVillaId(String villaid, Pageable pageable) {
+    return villaBookingRepository
+        .findAll(villaBookingSpecification.conditionalSearch(new String[] { villaid }, null, null, null), pageable);
+  }
+
   public Page<VillaBooking> getAll(String[] villaids, String startdate, String enddate, String query,
       Pageable pageable) {
     return villaBookingRepository
