@@ -305,7 +305,10 @@ public class VillaBookingController {
           HttpStatus.CREATED.value(),
           GenericApiResponseMessages.Generic.SUCCESS,
           "201#40591",
-          new Create_BookingPayment_WC_MLS_XAction_Response(payment.getId()));
+          new Create_BookingPayment_WC_MLS_XAction_Response(
+              payment.getId(),
+              booking.getId(),
+              externalPayment.getPaymentId()));
 
     } else if (booking.getStatus() == VillaBookingStatus.CONFIRMED) {
       // If confirmed status , we should process only services payment

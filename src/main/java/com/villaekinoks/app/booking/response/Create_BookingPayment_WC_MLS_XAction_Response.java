@@ -14,6 +14,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Create_BookingPayment_WC_MLS_XAction_Response {
 
-  private String id;
+  private String paymentid;
+
+  private String bookingid;
+
+  private String ackno;
 
 }
