@@ -320,7 +320,10 @@ public class VillaBookingController {
         HttpStatus.CREATED.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         "201#40593",
-        new Create_BookingPayment_WC_MLS_XAction_Response());
+        new Create_BookingPayment_WC_MLS_XAction_Response(
+            booking.getBookingpayment().getId(),
+            booking.getId(),
+            booking.getBookingpayment().getId()));
   }
 
   private String getClientIpAddress(HttpServletRequest request) {
