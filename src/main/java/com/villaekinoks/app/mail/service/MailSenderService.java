@@ -5,7 +5,6 @@ import com.villaekinoks.app.mail.model.EmailTemplate;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Slf4j
@@ -59,13 +59,23 @@ public class MailSenderService {
         String actualLocale = locale != null ? locale : "en";
         
         try {
-            ClassPathResource resource = new ClassPathResource(template.getTemplatePath(actualLocale));
-            return Files.readString(Path.of(resource.getURI()), StandardCharsets.UTF_8);
+            // Try to load template for requested locale from root mail-templates folder
+            Path templatePath = Paths.get("mail-templates", actualLocale, template.getTemplateName() + ".html");
+            if (Files.exists(templatePath)) {
+                return Files.readString(templatePath, StandardCharsets.UTF_8);
+            } else {
+                log.warn("Template not found for locale: {} at path: {}, falling back to English", actualLocale, templatePath);
+                throw new IOException("Template not found for locale: " + actualLocale);
+            }
         } catch (Exception e) {
             log.warn("Template not found for locale: {}, falling back to English", actualLocale);
             // Fallback to English if the requested locale is not available
-            ClassPathResource resource = new ClassPathResource(template.getTemplatePath("en"));
-            return Files.readString(Path.of(resource.getURI()), StandardCharsets.UTF_8);
+            Path englishTemplatePath = Paths.get("mail-templates", "en", template.getTemplateName() + ".html");
+            if (Files.exists(englishTemplatePath)) {
+                return Files.readString(englishTemplatePath, StandardCharsets.UTF_8);
+            } else {
+                throw new IOException("No template found for " + template.getTemplateName() + " in any locale");
+            }
         }
     }
 
