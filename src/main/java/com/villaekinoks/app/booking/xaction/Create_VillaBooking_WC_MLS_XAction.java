@@ -3,6 +3,7 @@ package com.villaekinoks.app.booking.xaction;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.villaekinoks.app.generic.entity.Currency;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,10 @@ public class Create_VillaBooking_WC_MLS_XAction {
   private String inquiror_email;
 
   private String inquiror_phonenumber;
+
+  private String inquiror_locale;
+
+  private Currency inquiror_currency;
 
   private List<Create_VillaBookingAdditionalService_WC_MLS_XAction> additionalservices;
 

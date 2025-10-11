@@ -180,7 +180,10 @@ public class VillaBookingController {
           xAction.getInquiror_lastname(),
           xAction.getInquiror_identitynumber(),
           xAction.getInquiror_email(),
-          xAction.getInquiror_phonenumber());
+          xAction.getInquiror_phonenumber(),
+          xAction.getInquiror_locale(),
+          xAction.getInquiror_currency()
+          );
     }
 
     booking.setInquiror(inquiror);

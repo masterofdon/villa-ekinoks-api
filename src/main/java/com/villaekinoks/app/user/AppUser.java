@@ -56,6 +56,9 @@ public class AppUser implements UserDetails {
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   protected AppUserTimeStamps timestamps;
 
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  protected AppUserLocaleSettings localesettings;
+
   @Enumerated(EnumType.STRING)
   @JsonIgnore
   protected DeleteStatus deletestatus;

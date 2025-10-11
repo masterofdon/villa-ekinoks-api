@@ -2,6 +2,8 @@ package com.villaekinoks.app.user.service;
 
 import org.springframework.stereotype.Service;
 
+import com.villaekinoks.app.generic.entity.Currency;
+import com.villaekinoks.app.user.AppUserLocaleSettings;
 import com.villaekinoks.app.user.AppUserPersonalInfo;
 import com.villaekinoks.app.user.AppUserTimeStamps;
 import com.villaekinoks.app.user.LockStatus;
@@ -30,18 +32,26 @@ public class VillaGuestUserRegistrationService {
       String lastname,
       String identitynumber,
       String email,
-      String phonenumber) {
+      String phonenumber,
+      String locale,
+      Currency currency) {
 
     VillaGuestUser inquiror = new VillaGuestUser();
     inquiror.setLogin(login);
     inquiror.setPassword(password); // No password for guest users
     inquiror.setIdentitynumber(identitynumber);
-    
+
     AppUserTimeStamps userTimestamps = new AppUserTimeStamps();
     userTimestamps.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
     userTimestamps.setUser(inquiror);
 
+    AppUserLocaleSettings localeSettings = new AppUserLocaleSettings();
+    localeSettings.setLocale(locale);
+    localeSettings.setCurrency(currency);
+    localeSettings.setUser(inquiror);
+
     inquiror.setTimestamps(userTimestamps);
+    inquiror.setLocalesettings(localeSettings);
 
     UserStatusSet statusSet = new UserStatusSet();
     statusSet.setLockstatus(LockStatus.UNLOCKED);
