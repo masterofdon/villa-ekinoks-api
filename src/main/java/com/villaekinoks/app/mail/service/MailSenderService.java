@@ -35,7 +35,7 @@ public class MailSenderService {
             helper.setTo(emailData.getTo());
             helper.setSubject(emailData.getSubject() != null ? emailData.getSubject() : emailData.getTemplate().getDefaultSubject());
             helper.setText(htmlContent, true);
-            helper.setFrom("info@villaekinoks.com");
+            helper.setFrom("info@villaekinoks.com" , "Villa Ekinoks");
 
             if (StringUtils.hasText(emailData.getCc())) {
                 helper.setCc(emailData.getCc());
