@@ -8,9 +8,9 @@ public class VillaBookingSpecification {
 
   public Specification<VillaBooking> query(String _query) {
     return (root, query, cb) -> cb.or(
-        cb.like(root.get("publicinfo").get("name"), "%" + _query + "%"),
-        cb.like(root.get("publicinfo").get("slug"), "%" + _query + "%"),
-        cb.like(root.get("publicinfo").get("description"), "%" + _query + "%"));
+        cb.like(root.get("villa").get("publicinfo").get("name"), "%" + _query + "%"),
+        cb.like(root.get("villa").get("publicinfo").get("slug"), "%" + _query + "%"),
+        cb.like(root.get("villa").get("publicinfo").get("description"), "%" + _query + "%"));
   }
 
   public Specification<VillaBooking> hasVillaIds(String[] villaIds) {
