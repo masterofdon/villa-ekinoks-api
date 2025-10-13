@@ -15,7 +15,7 @@ public class ApplicationCorsConfigurationProduction implements WebMvcConfigurer 
         .allowedOrigins(
             "https://www.villaekinoks.com",
             "https://villaekinoks.com",
-            "http://localhost:8080",
+            "https://admin.villaekinoks.com/",
             "http://localhost:3000",
             "http://localhost:5173")
         .allowedMethods("GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE");
