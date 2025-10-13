@@ -3,6 +3,7 @@ package com.villaekinoks.app.user.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +29,7 @@ public class VillaAdminUserController {
   @PostMapping("/reset-password")
   @VillaEkinoksAuthorized
   public GenericApiResponse<Reset_VillaAdminUserPassword_WC_MLS_XAction_Response> resetPassword(
-      Reset_VillaAdminUserPassword_WC_MLS_XAction xAction) {
+      @RequestBody Reset_VillaAdminUserPassword_WC_MLS_XAction xAction) {
 
     VillaAdminUser user = this.villaAdminUserService.getByLogin(xAction.getEmail());
     user.setPassword(bCryptPasswordEncoder.encode(xAction.getNewpassword()));
