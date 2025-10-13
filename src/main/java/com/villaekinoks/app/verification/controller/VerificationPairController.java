@@ -18,7 +18,9 @@ import com.villaekinoks.app.verification.VerificationPair;
 import com.villaekinoks.app.verification.VerificationPairStatus;
 import com.villaekinoks.app.verification.service.VerificationPairService;
 import com.villaekinoks.app.verification.xaction.Verify_LoginVerification_XAction;
+import com.villaekinoks.app.mail.service.LoginVerificationEmailService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -34,9 +36,12 @@ public class VerificationPairController {
 
   private final JwtService jwtService;
 
+  private final LoginVerificationEmailService loginVerificationEmailService;
+
   @PostMapping("/login-verifications")
   public GenericApiResponse<TokenizedUser> verifyLoginVerification(
-      @RequestBody Verify_LoginVerification_XAction xAction) {
+      @RequestBody Verify_LoginVerification_XAction xAction,
+      HttpServletRequest request) {
 
     VerificationPair vPair = this.verificationPairService.getById(xAction.getRequestid());
     if (vPair == null) {
@@ -73,6 +78,14 @@ public class VerificationPairController {
 
     vPair.setStatus(VerificationPairStatus.VERIFIED);
     this.verificationPairService.create(vPair);
+
+    // Send login verification confirmation email asynchronously
+    try {
+      this.loginVerificationEmailService.sendLoginVerificationEmail(aUser, request);
+    } catch (Exception e) {
+      // Log the error but don't fail the verification process
+      // The verification was successful, email sending is just a notification
+    }
 
     TokenizedUser tokenizedUser = new TokenizedUser();
     tokenizedUser.setUser(aUser);

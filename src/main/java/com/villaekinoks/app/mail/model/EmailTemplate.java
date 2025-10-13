@@ -10,6 +10,7 @@ public enum EmailTemplate {
     BOOKING_UNFINISHED("booking-unfinished", "Complete Your Booking - Villa Ekinoks"),
     NEW_CAMPAIGN_RELEASE("new-campaign-release", "New Campaign Available - Villa Ekinoks"),
     BOOKING_CONFIRMED_OWNER("booking-confirmed-owner", "New Booking Confirmed - Villa Ekinoks"),
+    LOGIN_VERIFICATION_CODE("login-verification-code", "Login Verification Code - Villa Ekinoks"),
     LOGIN_VERIFICATION("login-verification", "Login Verification - Villa Ekinoks");
 
     private final String templateName;

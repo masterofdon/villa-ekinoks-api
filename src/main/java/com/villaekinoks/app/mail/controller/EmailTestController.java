@@ -16,6 +16,7 @@ public class EmailTestController {
     private final CampaignEmailService campaignEmailService;
     private final AsyncEmailService asyncEmailService;
     private final com.villaekinoks.app.mail.service.LoginVerificationEmailService loginVerificationEmailService;
+    private final com.villaekinoks.app.mail.service.LoginVerificationCodeEmailService loginVerificationCodeEmailService;
     private final com.villaekinoks.app.user.service.AppUserService appUserService;
 
     @PostMapping("/test-campaign")

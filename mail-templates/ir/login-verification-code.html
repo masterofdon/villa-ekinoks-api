@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کد تأیید ورود - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            direction: rtl;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-right: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-right: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔑 کد تأیید ورود</h2>
+    </div>
+    
+    <div class="content">
+        <p>{{userName}} عزیز،</p>
+        
+        <p>شما در حال تلاش برای ورود به حساب Villa Ekinoks خود هستید. لطفاً از کد تأیید زیر برای تکمیل ورود خود استفاده کنید:</p>
+        
+        <div class="verification-code">
+            <h3>📱 کد تأیید شما</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ این کد در ۵ دقیقه منقضی می‌شود</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ اطلاعات امنیتی</h3>
+            <p><strong>جزئیات تلاش ورود:</strong></p>
+            <ul>
+                <li><strong>زمان:</strong> {{loginTime}}</li>
+                <li><strong>آدرس IP:</strong> {{ipAddress}}</li>
+                <li><strong>دستگاه:</strong> {{deviceInfo}}</li>
+            </ul>
+            <p><strong>مهم:</strong> اگر شما تلاش برای ورود نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید و برای امنیت، تغییر رمز عبور را در نظر بگیرید.</p>
+        </div>
+        
+        <p><strong>نحوه استفاده از این کد:</strong></p>
+        <ol>
+            <li>به صفحه ورود Villa Ekinoks بازگردید</li>
+            <li>کد تأیید ۶ رقمی بالا را وارد کنید</li>
+            <li>فرآیند ورود خود را تکمیل کنید</li>
+        </ol>
+        
+        <p>اگر در ورود مشکل دارید، لطفاً با تیم پشتیبانی ما تماس بگیرید.</p>
+        
+        <p>با احترام،<br>
+        تیم Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>این کد تأیید فقط ۵ دقیقه معتبر است. این کد را با کسی به اشتراک نگذارید.</p>
+        <p><small>اگر این کد را درخواست نکرده‌اید، لطفاً فوراً با پشتیبانی تماس بگیرید.</small></p>
+    </div>
+</body>
+</html>

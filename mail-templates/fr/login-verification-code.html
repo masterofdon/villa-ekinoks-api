@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code de Vérification de Connexion - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔑 Code de Vérification de Connexion</h2>
+    </div>
+    
+    <div class="content">
+        <p>Cher/Chère {{userName}},</p>
+        
+        <p>Vous essayez de vous connecter à votre compte Villa Ekinoks. Veuillez utiliser le code de vérification suivant pour terminer votre connexion :</p>
+        
+        <div class="verification-code">
+            <h3>📱 Votre Code de Vérification</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ Ce code expire dans 5 minutes</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ Informations de Sécurité</h3>
+            <p><strong>Détails de la Tentative de Connexion :</strong></p>
+            <ul>
+                <li><strong>Heure :</strong> {{loginTime}}</li>
+                <li><strong>Adresse IP :</strong> {{ipAddress}}</li>
+                <li><strong>Appareil :</strong> {{deviceInfo}}</li>
+            </ul>
+            <p><strong>Important :</strong> Si vous n'avez pas tenté de vous connecter, veuillez ignorer ce courriel et envisager de changer votre mot de passe par sécurité.</p>
+        </div>
+        
+        <p><strong>Comment utiliser ce code :</strong></p>
+        <ol>
+            <li>Retournez à la page de connexion Villa Ekinoks</li>
+            <li>Saisissez le code de vérification à 6 chiffres ci-dessus</li>
+            <li>Terminez votre processus de connexion</li>
+        </ol>
+        
+        <p>Si vous rencontrez des difficultés pour vous connecter, veuillez contacter notre équipe de support.</p>
+        
+        <p>Cordialement,<br>
+        L'Équipe Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Ce code de vérification n'est valide que pendant 5 minutes. Ne partagez ce code avec personne.</p>
+        <p><small>Si vous n'avez pas demandé ce code, veuillez contacter le support immédiatement.</small></p>
+    </div>
+</body>
+</html>

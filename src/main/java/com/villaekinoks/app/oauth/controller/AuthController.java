@@ -12,7 +12,7 @@ import com.villaekinoks.app.authentication.xaction.AppUserLogin_WC_MLS_XAction;
 import com.villaekinoks.app.exception.NotAuthorizedException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
-import com.villaekinoks.app.mail.service.LoginVerificationEmailService;
+import com.villaekinoks.app.mail.service.LoginVerificationCodeEmailService;
 import com.villaekinoks.app.user.AppUser;
 import com.villaekinoks.app.user.service.AppUserService;
 import com.villaekinoks.app.utils.RandomizerUtils;
@@ -35,7 +35,7 @@ public class AuthController {
 
   private final VerificationPairService verificationPairService;
 
-  private final LoginVerificationEmailService loginVerificationEmailService;
+  private final LoginVerificationCodeEmailService loginVerificationCodeEmailService;
 
   @PostMapping("/login")
   public GenericApiResponse<AppUserLogin_WC_MLS_XAction_Response> login(
@@ -63,9 +63,9 @@ public class AuthController {
 
     vPair = this.verificationPairService.create(vPair);
 
-    // Send login verification email asynchronously
+    // Send verification code email asynchronously
     try {
-      this.loginVerificationEmailService.sendLoginVerificationEmail(appUser, request);
+      this.loginVerificationCodeEmailService.sendVerificationCodeEmail(appUser, vPair.getVerificationcode(), request);
     } catch (Exception e) {
       // Log the error but don't fail the login process
       // The login was successful, email sending is just a notification

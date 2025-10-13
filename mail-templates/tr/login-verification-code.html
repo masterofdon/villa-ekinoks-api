@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Doğrulama Kodu - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #2c5aa0;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔑 Giriş Doğrulama Kodu</h2>
+    </div>
+    
+    <div class="content">
+        <p>Sayın {{userName}},</p>
+        
+        <p>Villa Ekinoks hesabınıza giriş yapmaya çalışıyorsunuz. Girişinizi tamamlamak için aşağıdaki doğrulama kodunu kullanın:</p>
+        
+        <div class="verification-code">
+            <h3>📱 Doğrulama Kodunuz</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ Bu kod 5 dakika içinde geçerliliğini yitirecek</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ Güvenlik Bilgileri</h3>
+            <p><strong>Giriş Denemesi Detayları:</strong></p>
+            <ul>
+                <li><strong>Zaman:</strong> {{loginTime}}</li>
+                <li><strong>IP Adresi:</strong> {{ipAddress}}</li>
+                <li><strong>Cihaz:</strong> {{deviceInfo}}</li>
+            </ul>
+            <p><strong>Önemli:</strong> Eğer giriş yapmaya çalışmadıysanız, lütfen bu e-postayı dikkate almayın ve güvenlik için şifrenizi değiştirmeyi düşünün.</p>
+        </div>
+        
+        <p><strong>Bu kodu nasıl kullanacağınız:</strong></p>
+        <ol>
+            <li>Villa Ekinoks giriş sayfasına geri dönün</li>
+            <li>Yukarıdaki 6 haneli doğrulama kodunu girin</li>
+            <li>Giriş işleminizi tamamlayın</li>
+        </ol>
+        
+        <p>Giriş yapmakta sorun yaşıyorsanız, lütfen destek ekibimizle iletişime geçin.</p>
+        
+        <p>Saygılarımızla,<br>
+        Villa Ekinoks Ekibi</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Bu doğrulama kodu yalnızca 5 dakika geçerlidir. Bu kodu kimseyle paylaşmayın.</p>
+        <p><small>Bu kodu talep etmediyseniz, lütfen hemen destekle iletişime geçin.</small></p>
+    </div>
+</body>
+</html>

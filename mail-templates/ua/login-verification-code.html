@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Код підтвердження входу - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔑 Код підтвердження входу</h2>
+    </div>
+    
+    <div class="content">
+        <p>Шановний(а) {{userName}},</p>
+        
+        <p>Ви намагаєтесь увійти до свого облікового запису Villa Ekinoks. Будь ласка, використайте наступний код підтвердження для завершення входу:</p>
+        
+        <div class="verification-code">
+            <h3>📱 Ваш код підтвердження</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ Цей код закінчиться через 5 хвилин</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ Інформація безпеки</h3>
+            <p><strong>Деталі спроби входу:</strong></p>
+            <ul>
+                <li><strong>Час:</strong> {{loginTime}}</li>
+                <li><strong>IP-адреса:</strong> {{ipAddress}}</li>
+                <li><strong>Пристрій:</strong> {{deviceInfo}}</li>
+            </ul>
+            <p><strong>Важливо:</strong> Якщо ви не намагалися увійти до системи, будь ласка, проігноруйте цей лист і розгляньте можливість зміни пароля для безпеки.</p>
+        </div>
+        
+        <p><strong>Як використовувати цей код:</strong></p>
+        <ol>
+            <li>Поверніться на сторінку входу Villa Ekinoks</li>
+            <li>Введіть 6-значний код підтвердження вище</li>
+            <li>Завершіть процес входу</li>
+        </ol>
+        
+        <p>Якщо у вас проблеми зі входом, будь ласка, зв'яжіться з нашою службою підтримки.</p>
+        
+        <p>З повагою,<br>
+        Команда Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Цей код підтвердження дійсний лише 5 хвилин. Не діліться цим кодом ні з ким.</p>
+        <p><small>Якщо ви не запитували цей код, будь ласка, негайно зверніться до служби підтримки.</small></p>
+    </div>
+</body>
+</html>
