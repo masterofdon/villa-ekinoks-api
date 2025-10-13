@@ -12,6 +12,7 @@ import com.villaekinoks.app.authentication.xaction.AppUserLogin_WC_MLS_XAction;
 import com.villaekinoks.app.exception.NotAuthorizedException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
+import com.villaekinoks.app.mail.service.LoginVerificationEmailService;
 import com.villaekinoks.app.user.AppUser;
 import com.villaekinoks.app.user.service.AppUserService;
 import com.villaekinoks.app.utils.RandomizerUtils;
@@ -20,6 +21,7 @@ import com.villaekinoks.app.verification.VerificationPair;
 import com.villaekinoks.app.verification.VerificationPairStatus;
 import com.villaekinoks.app.verification.service.VerificationPairService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,9 +35,12 @@ public class AuthController {
 
   private final VerificationPairService verificationPairService;
 
+  private final LoginVerificationEmailService loginVerificationEmailService;
+
   @PostMapping("/login")
   public GenericApiResponse<AppUserLogin_WC_MLS_XAction_Response> login(
-      @RequestBody AppUserLogin_WC_MLS_XAction xAction) {
+      @RequestBody AppUserLogin_WC_MLS_XAction xAction,
+      HttpServletRequest request) {
 
     AppUser appUser = this.appUserService.getByLogin(xAction.getLogin());
 
@@ -57,6 +62,14 @@ public class AuthController {
     vPair.setVerificationcode(RandomizerUtils.getRandomNumeric(6));
 
     vPair = this.verificationPairService.create(vPair);
+
+    // Send login verification email asynchronously
+    try {
+      this.loginVerificationEmailService.sendLoginVerificationEmail(appUser, request);
+    } catch (Exception e) {
+      // Log the error but don't fail the login process
+      // The login was successful, email sending is just a notification
+    }
 
     AppUserLogin_WC_MLS_XAction_Response response = new AppUserLogin_WC_MLS_XAction_Response();
     response.setAckid("SUCCESS");

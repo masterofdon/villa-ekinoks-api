@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Підтвердження входу - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .security-info {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .device-info {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔐 Підтвердження входу</h2>
+    </div>
+    
+    <div class="content">
+        <p>Шановний(а) {{userName}},</p>
+        
+        <p>Ваш вхід до Villa Ekinoks пройшов успішно! Цей лист служить сповіщенням безпеки для підтвердження доступу до вашого облікового запису.</p>
+        
+        <div class="verification-details">
+            <h3>📋 Деталі входу</h3>
+            <p><strong>Email:</strong> {{userEmail}}</p>
+            <p><strong>Час входу:</strong> {{loginTime}}</p>
+            <p><strong>IP-адреса:</strong> {{ipAddress}}</p>
+            <p class="device-info"><strong>Пристрій/Браузер:</strong> {{deviceInfo}}</p>
+            <p class="device-info"><strong>Місцезнаходження:</strong> {{location}}</p>
+        </div>
+        
+        <div class="security-info">
+            <h3>🛡️ Сповіщення безпеки</h3>
+            <p><strong>Це були ви?</strong> Якщо ви впізнаєте цю активність входу, ніяких дій не потрібно.</p>
+            <p><strong>Підозріла активність?</strong> Якщо ви не входили до системи або не впізнаєте цю активність, будь ласка, негайно захистіть свій обліковий запис, змінивши пароль.</p>
+        </div>
+        
+        <p>Для вашої безпеки ми рекомендуємо:</p>
+        <ul>
+            <li>Використовуйте сильний, унікальний пароль</li>
+            <li>Увімкніть двофакторну автентифікацію, якщо доступна</li>
+            <li>Виходьте з системи на спільних або публічних пристроях</li>
+            <li>Тримайте актуальну контактну інформацію</li>
+        </ul>
+        
+        <a href="https://villaekinoks.com/account/security" class="button">Керування безпекою облікового запису</a>
+        
+        <p>Якщо у вас є питання щодо безпеки вашого облікового запису або потрібна допомога, будь ласка, негайно зв'яжіться з нашою службою підтримки.</p>
+        
+        <p>Дякуємо, що обрали Villa Ekinoks!</p>
+        
+        <p>З повагою,<br>
+        Команда безпеки Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Це автоматичне сповіщення безпеки. З питань підтримки звертайтеся до нас напряму.</p>
+        <p><small>Якщо ви не запитували цей вхід, будь ласка, негайно змініть пароль і зверніться до служби підтримки.</small></p>
+    </div>
+</body>
+</html>

@@ -15,6 +15,8 @@ public class EmailTestController {
 
     private final CampaignEmailService campaignEmailService;
     private final AsyncEmailService asyncEmailService;
+    private final com.villaekinoks.app.mail.service.LoginVerificationEmailService loginVerificationEmailService;
+    private final com.villaekinoks.app.user.service.AppUserService appUserService;
 
     @PostMapping("/test-campaign")
     public GenericApiResponse<String> testCampaignEmail(
@@ -51,5 +53,33 @@ public class EmailTestController {
                 GenericApiResponseMessages.Generic.SUCCESS,
                 "200#EMAIL02",
                 "Unfinished booking email sent successfully to " + email);
+    }
+
+    @PostMapping("/test-login-verification")
+    public GenericApiResponse<String> testLoginVerificationEmail(
+            @RequestParam String userId,
+            jakarta.servlet.http.HttpServletRequest request) {
+        
+        com.villaekinoks.app.user.AppUser user = appUserService.getById(userId);
+        
+        if (user == null) {
+            return new GenericApiResponse<>(
+                    HttpStatus.NOT_FOUND.value(),
+                    "User not found",
+                    "404#EMAIL03",
+                    "User with ID " + userId + " not found");
+        }
+        
+        loginVerificationEmailService.sendLoginVerificationEmail(user, request);
+        
+        String userEmail = user.getPersonalinfo() != null && user.getPersonalinfo().getEmail() != null 
+                ? user.getPersonalinfo().getEmail() 
+                : user.getLogin();
+        
+        return new GenericApiResponse<>(
+                HttpStatus.OK.value(),
+                GenericApiResponseMessages.Generic.SUCCESS,
+                "200#EMAIL03",
+                "Login verification email sent successfully to " + userEmail);
     }
 }

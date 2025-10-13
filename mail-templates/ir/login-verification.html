@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأیید ورود - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            direction: rtl;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-right: 4px solid #3498db;
+        }
+        .security-info {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-right: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .device-info {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔐 تأیید ورود</h2>
+    </div>
+    
+    <div class="content">
+        <p>{{userName}} عزیز،</p>
+        
+        <p>ورود شما به Villa Ekinoks موفقیت‌آمیز بود! این ایمیل به عنوان اطلاعیه امنیتی برای تأیید دسترسی به حساب کاربری شما ارسال شده است.</p>
+        
+        <div class="verification-details">
+            <h3>📋 جزئیات ورود</h3>
+            <p><strong>ایمیل:</strong> {{userEmail}}</p>
+            <p><strong>زمان ورود:</strong> {{loginTime}}</p>
+            <p><strong>آدرس IP:</strong> {{ipAddress}}</p>
+            <p class="device-info"><strong>دستگاه/مرورگر:</strong> {{deviceInfo}}</p>
+            <p class="device-info"><strong>موقعیت:</strong> {{location}}</p>
+        </div>
+        
+        <div class="security-info">
+            <h3>🛡️ اطلاعیه امنیتی</h3>
+            <p><strong>این شما بودید؟</strong> اگر این فعالیت ورود را می‌شناسید، هیچ اقدامی لازم نیست.</p>
+            <p><strong>فعالیت مشکوک؟</strong> اگر وارد نشده‌اید یا این فعالیت را نمی‌شناسید، لطفاً فوراً با تغییر رمز عبور، حساب خود را ایمن کنید.</p>
+        </div>
+        
+        <p>برای امنیت شما توصیه می‌کنیم:</p>
+        <ul>
+            <li>از رمز عبور قوی و منحصر به فرد استفاده کنید</li>
+            <li>احراز هویت دو مرحله‌ای را فعال کنید (در صورت وجود)</li>
+            <li>از دستگاه‌های مشترک یا عمومی خارج شوید</li>
+            <li>اطلاعات تماس خود را به‌روز نگه دارید</li>
+        </ul>
+        
+        <a href="https://villaekinoks.com/account/security" class="button">مدیریت امنیت حساب</a>
+        
+        <p>اگر نگرانی در مورد امنیت حساب خود دارید یا به کمک نیاز دارید، لطفاً فوراً با تیم پشتیبانی ما تماس بگیرید.</p>
+        
+        <p>از انتخاب Villa Ekinoks متشکریم!</p>
+        
+        <p>با احترام،<br>
+        تیم امنیت Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>این یک اطلاعیه امنیتی خودکار است. برای پشتیبانی لطفاً مستقیماً با ما تماس بگیرید.</p>
+        <p><small>اگر این ورود را درخواست نکرده‌اید، لطفاً فوراً رمز عبور خود را تغییر دهید و با پشتیبانی تماس بگیرید.</small></p>
+    </div>
+</body>
+</html>

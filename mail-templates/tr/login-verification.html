@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Doğrulaması - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-details {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .security-info {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .device-info {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🔐 Giriş Doğrulaması</h2>
+    </div>
+    
+    <div class="content">
+        <p>Sayın {{userName}},</p>
+        
+        <p>Villa Ekinoks'a girişiniz başarılı oldu! Bu e-posta, hesap erişiminizi doğrulamak için gönderilen bir güvenlik bildirimidir.</p>
+        
+        <div class="verification-details">
+            <h3>📋 Giriş Detayları</h3>
+            <p><strong>E-posta:</strong> {{userEmail}}</p>
+            <p><strong>Giriş Zamanı:</strong> {{loginTime}}</p>
+            <p><strong>IP Adresi:</strong> {{ipAddress}}</p>
+            <p class="device-info"><strong>Cihaz/Tarayıcı:</strong> {{deviceInfo}}</p>
+            <p class="device-info"><strong>Konum:</strong> {{location}}</p>
+        </div>
+        
+        <div class="security-info">
+            <h3>🛡️ Güvenlik Bildirimi</h3>
+            <p><strong>Bu siz miydiniz?</strong> Bu giriş aktivitesini tanıyorsanız, herhangi bir işlem yapmanıza gerek yoktur.</p>
+            <p><strong>Şüpheli aktivite?</strong> Eğer giriş yapmadıysanız veya bu aktiviteyi tanımıyorsanız, lütfen şifrenizi değiştirerek hesabınızı hemen güvence altına alın.</p>
+        </div>
+        
+        <p>Güvenliğiniz için önerilerimiz:</p>
+        <ul>
+            <li>Güçlü ve benzersiz bir şifre kullanın</li>
+            <li>Mevcut ise iki faktörlü kimlik doğrulamayı etkinleştirin</li>
+            <li>Paylaşımlı veya halka açık cihazlarda çıkış yapmayı unutmayın</li>
+            <li>İletişim bilgilerinizi güncel tutun</li>
+        </ul>
+        
+        <a href="https://villaekinoks.com/account/security" class="button">Hesap Güvenliğini Yönet</a>
+        
+        <p>Hesap güvenliğiniz konusunda endişeleriniz varsa veya yardıma ihtiyacınız varsa, lütfen destek ekibimizle hemen iletişime geçin.</p>
+        
+        <p>Villa Ekinoks'u tercih ettiğiniz için teşekkür ederiz!</p>
+        
+        <p>Saygılarımızla,<br>
+        Villa Ekinoks Güvenlik Ekibi</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Bu otomatik bir güvenlik bildirimidir. Destek için lütfen doğrudan bizimle iletişime geçin.</p>
+        <p><small>Bu girişi talep etmediyseniz, lütfen şifrenizi hemen değiştirin ve destekle iletişime geçin.</small></p>
+    </div>
+</body>
+</html>

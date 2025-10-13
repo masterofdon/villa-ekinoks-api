@@ -32,6 +32,7 @@ public class AnomalyCorrectorController {
         AppUserLocaleSettings localeSettings = new AppUserLocaleSettings();
         localeSettings.setLocale("en_UK");
         localeSettings.setCurrency(Currency.EUR);
+        localeSettings.setUser(user);
         user.setLocalesettings(localeSettings);
         this.appUserService.save(user);
       }
