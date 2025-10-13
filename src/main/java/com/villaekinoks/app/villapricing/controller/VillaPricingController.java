@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.service.VillaBookingService;
+import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
@@ -19,7 +20,9 @@ import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villapricing.VillaPricingSchema;
 import com.villaekinoks.app.villapricing.response.BookingInfo;
-import com.villaekinoks.app.villapricing.response.VillaPricingSchemaWithBookings;
+import com.villaekinoks.app.villapricing.response.SimpleVillaBooking;
+import com.villaekinoks.app.villapricing.response.VillaPricingSchemaWithBookingInfo;
+import com.villaekinoks.app.villapricing.response.VillaPricingWithVillaBooking;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +36,7 @@ public class VillaPricingController {
   private final VillaBookingService villaBookingService;
 
   @GetMapping
-  public GenericApiResponse<VillaPricingSchemaWithBookings> getVillaPricingSchema(@RequestParam String villaid) {
+  public GenericApiResponse<VillaPricingSchemaWithBookingInfo> getVillaPricingSchema(@RequestParam String villaid) {
 
     Villa villa = this.villaService.getById(villaid);
     if (villa == null) {
@@ -44,7 +47,7 @@ public class VillaPricingController {
       throw new NotFoundException();
     }
 
-    VillaPricingSchemaWithBookings pricingSchemaWithBookings = new VillaPricingSchemaWithBookings();
+    VillaPricingSchemaWithBookingInfo pricingSchemaWithBookings = new VillaPricingSchemaWithBookingInfo();
     pricingSchemaWithBookings.setPricing(pricingSchema);
     pricingSchemaWithBookings.setBookings(new ArrayList<>());
     Page<VillaBooking> bookings = villaBookingService.getByVillaId(villaid, Pageable.unpaged());
@@ -52,6 +55,40 @@ public class VillaPricingController {
       BookingInfo bookingInfo = new BookingInfo();
       bookingInfo.setStartdate(e.getStartdate());
       bookingInfo.setEnddate(e.getEnddate());
+      pricingSchemaWithBookings.getBookings().add(bookingInfo);
+    });
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        "200#VILLA01",
+        pricingSchemaWithBookings);
+  }
+
+  @GetMapping("/detailed")
+  @VillaEkinoksAuthorized
+  public GenericApiResponse<VillaPricingWithVillaBooking> getVillaPricingSchemaDetailed(
+      @RequestParam String villaid) {
+
+    Villa villa = this.villaService.getById(villaid);
+    if (villa == null) {
+      throw new NotFoundException();
+    }
+    VillaPricingSchema pricingSchema = villa.getPricing();
+    if (pricingSchema == null) {
+      throw new NotFoundException();
+    }
+
+    VillaPricingWithVillaBooking pricingSchemaWithBookings = new VillaPricingWithVillaBooking();
+    pricingSchemaWithBookings.setPricing(pricingSchema);
+    pricingSchemaWithBookings.setBookings(new ArrayList<>());
+    Page<VillaBooking> bookings = villaBookingService.getByVillaId(villaid, Pageable.unpaged());
+    bookings.getContent().forEach(e -> {
+      SimpleVillaBooking bookingInfo = new SimpleVillaBooking();
+      bookingInfo.setStartdate(e.getStartdate());
+      bookingInfo.setEnddate(e.getEnddate());
+      bookingInfo.setId(e.getId());
+      bookingInfo.setStatus(e.getStatus());
+      bookingInfo.setInquiror(e.getInquiror());
       pricingSchemaWithBookings.getBookings().add(bookingInfo);
     });
     return new GenericApiResponse<>(

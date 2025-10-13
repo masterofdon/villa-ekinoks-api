@@ -11,7 +11,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-public class VillaPricingSchemaWithBookings {
+public class VillaPricingSchemaWithBookingInfo {
 
   private VillaPricingSchema pricing;
 

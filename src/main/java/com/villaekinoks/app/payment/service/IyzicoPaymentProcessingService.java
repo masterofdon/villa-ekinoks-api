@@ -17,7 +17,6 @@ import com.iyzipay.model.PaymentCard;
 import com.iyzipay.model.PaymentChannel;
 import com.iyzipay.model.PaymentGroup;
 import com.iyzipay.request.CreatePaymentRequest;
-import com.villaekinoks.app.utils.RandomizerUtils;
 
 @Service
 public class IyzicoPaymentProcessingService {

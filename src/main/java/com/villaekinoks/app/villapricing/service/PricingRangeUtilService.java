@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.villaekinoks.app.villapricing.PricingRange;
 import com.villaekinoks.app.villapricing.VillaPricingSchema;
-import com.villaekinoks.app.villapricing.xaction.Update_PricingRange_WC_MLS_XAction;
 import com.villaekinoks.app.villapricing.xaction.UpdatePricingRangeAction;
+import com.villaekinoks.app.villapricing.xaction.Update_PricingRange_WC_MLS_XAction;
 
 import lombok.RequiredArgsConstructor;
 
