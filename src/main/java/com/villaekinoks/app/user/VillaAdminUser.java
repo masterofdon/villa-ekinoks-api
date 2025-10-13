@@ -18,7 +18,7 @@ public class VillaAdminUser extends AppUser {
 
   @ManyToOne
   @JoinColumn(name = "villa_id", nullable = false)
-  @JsonIncludeProperties({ "id", "name" })
+  @JsonIncludeProperties({ "id", "publicinfo", "privateinfo" })
   private Villa villa;
 
   @Enumerated(EnumType.STRING)
