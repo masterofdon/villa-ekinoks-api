@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.service.VillaBookingService;
-import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
@@ -65,7 +64,6 @@ public class VillaPricingController {
   }
 
   @GetMapping("/detailed")
-  @VillaEkinoksAuthorized
   public GenericApiResponse<VillaPricingWithVillaBooking> getVillaPricingSchemaDetailed(
       @RequestParam String villaid) {
 
