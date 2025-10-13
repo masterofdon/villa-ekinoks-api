@@ -17,7 +17,7 @@ import com.villaekinoks.app.user.xaction.Reset_VillaAdminUserPassword_WC_MLS_XAc
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/villa-admin-users")
+@RequestMapping("/api/v1/villa-admin-users")
 @RequiredArgsConstructor
 public class VillaAdminUserController {
 
