@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
@@ -29,6 +30,7 @@ public class VillaStatController {
   private final VillaStatService villaStatService;
 
   @GetMapping
+  @VillaEkinoksAuthorized
   public GenericApiResponse<Get_VillaStats_WC_MLS_XAction_Response> getVillaStats(
       @RequestParam String villaid) {
 
