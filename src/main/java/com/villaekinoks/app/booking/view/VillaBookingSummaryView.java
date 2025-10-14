@@ -1,17 +1,16 @@
 package com.villaekinoks.app.booking.view;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.villaekinoks.app.booking.VillaBooking;
+import com.villaekinoks.app.booking.VillaBookingAdditionalService;
 import com.villaekinoks.app.booking.VillaBookingStatus;
 import com.villaekinoks.app.booking.VillaBookingTimestamps;
+import com.villaekinoks.app.payment.Payment;
 import com.villaekinoks.app.user.VillaGuestUser;
-import com.villaekinoks.app.villa.Villa;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +36,12 @@ public class VillaBookingSummaryView {
   @JsonIncludeProperties({ "id", "personalinfo" })
   private VillaGuestUser inquiror;
 
+  private Set<VillaBookingAdditionalService> services;
+
+  private Payment bookingpayment;
+
+  private Integer numberofguests;
+
   public static VillaBookingSummaryView fromEntity(VillaBooking entity) {
     VillaBookingSummaryView view = new VillaBookingSummaryView();
     view.setId(entity.getId());
@@ -45,6 +50,9 @@ public class VillaBookingSummaryView {
     view.setEnddate(entity.getEnddate());
     view.setStatus(entity.getStatus());
     view.setInquiror(entity.getInquiror());
+    view.setServices(entity.getServices());
+    view.setBookingpayment(entity.getBookingpayment());
+    view.setNumberofguests(entity.getNumberofguests());
     return view;
   }
 }
