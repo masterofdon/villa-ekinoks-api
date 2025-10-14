@@ -13,6 +13,7 @@ import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.stats.VillaStat;
 import com.villaekinoks.app.stats.VillaStatConstants;
 import com.villaekinoks.app.stats.service.VillaStatService;
+import com.villaekinoks.app.utils.TimeUtils;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 
@@ -57,6 +58,7 @@ public class VillaStatsScheduler {
       allBookingsStat.setPrefix("");
       allBookingsStat.setSuffix("");
       allBookingsStat.setColor("blue");
+      allBookingsStat.setLastupdate(TimeUtils.tsInstantNow().toEpochMilli());
       this.villaStatService.create(allBookingsStat);
 
       // 2. All revenue stat for this villa
@@ -80,6 +82,7 @@ public class VillaStatsScheduler {
       allRevenueStat.setPrefix("");
       allRevenueStat.setSuffix("EUR");
       allRevenueStat.setColor("green");
+      allRevenueStat.setLastupdate(TimeUtils.tsInstantNow().toEpochMilli());
       this.villaStatService.create(allRevenueStat);
 
       // 3. Occupancy Rate Stat for this villa
@@ -120,6 +123,7 @@ public class VillaStatsScheduler {
       occupancyRateStat.setValue(String.format("%.2f", occupancyRate));
       occupancyRateStat.setPrefix("");
       occupancyRateStat.setSuffix("%");
+      occupancyRateStat.setLastupdate(TimeUtils.tsInstantNow().toEpochMilli());
       occupancyRateStat.setColor("orange");
       this.villaStatService.create(occupancyRateStat);
     }
