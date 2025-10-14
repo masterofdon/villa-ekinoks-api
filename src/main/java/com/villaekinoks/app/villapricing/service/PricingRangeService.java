@@ -34,4 +34,8 @@ public class PricingRangeService {
   public List<PricingRange> findOverlappingRanges(String villaPricingSchemaId, String startPeriod, String endPeriod) {
     return pricingRangeRepository.findOverlappingRanges(villaPricingSchemaId, startPeriod, endPeriod);
   }
+
+  public List<PricingRange> findAllByVillaPricingSchemaOrderByStartperiod(String villaPricingSchemaId) {
+    return pricingRangeRepository.findAllByVillaPricingSchemaOrderByStartperiod(villaPricingSchemaId);
+  }
 }

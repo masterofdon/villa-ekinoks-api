@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.villaekinoks.app.generic.entity.Price;
 import com.villaekinoks.app.villapricing.PricingRange;
 import com.villaekinoks.app.villapricing.VillaPricingSchema;
 import com.villaekinoks.app.villapricing.xaction.UpdatePricingRangeAction;
@@ -68,7 +69,7 @@ public class PricingRangeUtilService {
     List<PricingRange> overlappingRanges = findOverlappingRanges(villaPricingSchema, startPeriod, endPeriod);
 
     if (action == UpdatePricingRangeAction.DELETE) {
-      handleDeleteAction(overlappingRanges, startPeriod, endPeriod);
+      handleDeleteAction(villaPricingSchema, overlappingRanges, startPeriod, endPeriod);
     } else if (action == UpdatePricingRangeAction.ADD) {
       handleAddAction(villaPricingSchema, overlappingRanges, xAction);
     }
@@ -84,7 +85,7 @@ public class PricingRangeUtilService {
   /**
    * Handles DELETE action - removes the specified period from existing ranges
    */
-  private void handleDeleteAction(List<PricingRange> overlappingRanges, String deleteStartPeriod, String deleteEndPeriod) {
+  private void handleDeleteAction(VillaPricingSchema villaPricingSchema, List<PricingRange> overlappingRanges, String deleteStartPeriod, String deleteEndPeriod) {
     List<PricingRange> rangesToDelete = new ArrayList<>();
     List<PricingRange> rangesToAdd = new ArrayList<>();
 
@@ -133,6 +134,9 @@ public class PricingRangeUtilService {
     // Execute deletions and additions
     rangesToDelete.forEach(pricingRangeService::delete);
     rangesToAdd.forEach(pricingRangeService::save);
+    
+    // Consolidate adjacent ranges with same price after deletion
+    consolidateAdjacentRanges(villaPricingSchema);
   }
 
   /**
@@ -228,6 +232,9 @@ public class PricingRangeUtilService {
     newRange.setVillapricingschema(villaPricingSchema);
     
     pricingRangeService.save(newRange);
+    
+    // Consolidate adjacent ranges with same price after addition
+    consolidateAdjacentRanges(villaPricingSchema);
   }
 
   /**
@@ -275,5 +282,81 @@ public class PricingRangeUtilService {
     } catch (Exception e) {
       throw new IllegalArgumentException("Invalid date format: " + dateStr, e);
     }
+  }
+
+  /**
+   * Consolidates adjacent pricing ranges with the same price into single ranges.
+   * This method fetches all pricing ranges for the villa, sorts them by start period,
+   * and merges consecutive ranges that have the same price.
+   * 
+   * @param villaPricingSchema The villa pricing schema to consolidate ranges for
+   */
+  private void consolidateAdjacentRanges(VillaPricingSchema villaPricingSchema) {
+    // Get all pricing ranges for this villa, sorted by start period
+    List<PricingRange> allRanges = pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(villaPricingSchema.getId());
+    
+    if (allRanges.size() <= 1) {
+      return; // Nothing to consolidate
+    }
+
+    List<PricingRange> rangesToDelete = new ArrayList<>();
+    List<PricingRange> rangesToAdd = new ArrayList<>();
+    
+    int i = 0;
+    while (i < allRanges.size()) {
+      PricingRange currentRange = allRanges.get(i);
+      String consolidatedStart = currentRange.getStartperiod();
+      String consolidatedEnd = currentRange.getEndperiod();
+      
+      // Look for consecutive ranges with the same price
+      int j = i + 1;
+      while (j < allRanges.size()) {
+        PricingRange nextRange = allRanges.get(j);
+        
+        // Check if ranges are adjacent and have the same price
+        String expectedNextStart = addDaysToDate(consolidatedEnd, 1);
+        boolean areAdjacent = expectedNextStart.equals(nextRange.getStartperiod());
+        boolean haveSamePrice = arePricesEqual(currentRange.getPricepernight(), nextRange.getPricepernight());
+        
+        if (areAdjacent && haveSamePrice) {
+          // Extend the consolidated range
+          consolidatedEnd = nextRange.getEndperiod();
+          j++;
+        } else {
+          break; // No more adjacent ranges with same price
+        }
+      }
+      
+      // If we consolidated multiple ranges (j > i + 1), replace them with a single range
+      if (j > i + 1) {
+        // Mark original ranges for deletion
+        for (int k = i; k < j; k++) {
+          rangesToDelete.add(allRanges.get(k));
+        }
+        
+        // Create new consolidated range
+        PricingRange consolidatedRange = createNewPricingRange(currentRange, consolidatedStart, consolidatedEnd);
+        rangesToAdd.add(consolidatedRange);
+      }
+      
+      i = j; // Move to the next unprocessed range
+    }
+    
+    // Execute consolidation if needed
+    if (!rangesToDelete.isEmpty()) {
+      rangesToDelete.forEach(pricingRangeService::delete);
+      rangesToAdd.forEach(pricingRangeService::save);
+    }
+  }
+
+  /**
+   * Checks if two Price objects are equal (same amount and currency)
+   */
+  private boolean arePricesEqual(Price price1, Price price2) {
+    if (price1 == null || price2 == null) {
+      return price1 == price2;
+    }
+    return price1.getAmount().equals(price2.getAmount()) && 
+           price1.getCurrency() == price2.getCurrency();
   }
 }

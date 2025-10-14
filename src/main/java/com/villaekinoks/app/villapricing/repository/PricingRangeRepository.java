@@ -30,4 +30,12 @@ public interface PricingRangeRepository extends JpaRepository<PricingRange, Stri
       String villaPricingSchemaId,
       String startPeriod,
       String endPeriod);
+
+  @Query("""
+      SELECT pr FROM PricingRange pr
+      WHERE pr.villapricingschema.id = :villaPricingSchemaId
+      ORDER BY pr.startperiod ASC
+      """)
+  List<PricingRange> findAllByVillaPricingSchemaOrderByStartperiod(
+      String villaPricingSchemaId);
 }
