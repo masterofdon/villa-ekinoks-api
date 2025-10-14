@@ -47,7 +47,7 @@ public class VillaStatsScheduler {
           Pageable.unpaged()).getContent();
       // 1. Generate All Bookings Stat for this villa
       VillaStat allBookingsStat = villaStats.stream()
-          .filter(e -> e.getValue().equals(VillaStatConstants.BOOKINGS_TOTAL_STATCODE)).findFirst().orElse(null);
+          .filter(e -> e.getStatcode().equals(VillaStatConstants.BOOKINGS_TOTAL_STATCODE)).findFirst().orElse(null);
       if (allBookingsStat == null) {
         allBookingsStat = new VillaStat();
         allBookingsStat.setVilla(villa);
@@ -61,7 +61,7 @@ public class VillaStatsScheduler {
 
       // 2. All revenue stat for this villa
       VillaStat allRevenueStat = villaStats.stream()
-          .filter(e -> e.getValue().equals(VillaStatConstants.REVENUE_TOTAL_STATCODE)).findFirst().orElse(null);
+          .filter(e -> e.getStatcode().equals(VillaStatConstants.REVENUE_TOTAL_STATCODE)).findFirst().orElse(null);
       if (allRevenueStat == null) {
         allRevenueStat = new VillaStat();
         allRevenueStat.setVilla(villa);
@@ -84,7 +84,8 @@ public class VillaStatsScheduler {
 
       // 3. Occupancy Rate Stat for this villa
       VillaStat occupancyRateStat = villaStats.stream()
-          .filter(e -> e.getValue().equals(VillaStatConstants.VILLA_OCCUPANCY_RATE_STATCODE)).findFirst().orElse(null);
+          .filter(e -> e.getStatcode().equals(VillaStatConstants.VILLA_OCCUPANCY_RATE_STATCODE)).findFirst()
+          .orElse(null);
       if (occupancyRateStat == null) {
         occupancyRateStat = new VillaStat();
         occupancyRateStat.setVilla(villa);

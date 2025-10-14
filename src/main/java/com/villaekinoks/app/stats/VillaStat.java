@@ -2,6 +2,7 @@ package com.villaekinoks.app.stats;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.villaekinoks.app.villa.Villa;
 
 import jakarta.persistence.Entity;
@@ -22,6 +23,7 @@ public class VillaStat {
 
   @ManyToOne
   @JoinColumn(name = "villa_id", nullable = false)
+  @JsonIgnore
   private Villa villa;
 
   private Long lastupdate;
