@@ -32,12 +32,12 @@ import lombok.RequiredArgsConstructor;
  * Scenario 1: ADD completely inside existing range (split into 3 ranges)
  * Existing: [20251001 - 20251031, 350.00]
  * Add:      [20251010 - 20251022, 400.00]
- * Result:   [20251001 - 20251010, 350.00] + [20251010 - 20251022, 400.00] + [20251022 - 20251031, 350.00]
+ * Result:   [20251001 - 20251009, 350.00] + [20251010 - 20251022, 400.00] + [20251023 - 20251031, 350.00]
  * 
  * Scenario 2: ADD spans multiple ranges (preserves non-overlapping parts)
  * Existing: [20251001 - 20251012, 350.00] + [20251022 - 20251030, 350.00]
  * Add:      [20251010 - 20251024, 400.00]
- * Result:   [20251001 - 20251010, 350.00] + [20251010 - 20251024, 400.00] + [20251024 - 20251030, 350.00]
+ * Result:   [20251001 - 20251009, 350.00] + [20251010 - 20251024, 400.00] + [20251025 - 20251030, 350.00]
  * 
  * Scenario 3: No Overlap Addition
  * Existing: [20251001 - 20251012, 350.00]
@@ -143,12 +143,12 @@ public class PricingRangeUtilService {
    * Scenario 1: ADD inside existing range (split into 3)
    * Existing: [20251001-20251031, 350.00]
    * ADD:      [20251010-20251022, 400.00]
-   * Result:   [20251001-20251010, 350.00] + [20251010-20251022, 400.00] + [20251022-20251031, 350.00]
+   * Result:   [20251001-20251009, 350.00] + [20251010-20251022, 400.00] + [20251023-20251031, 350.00]
    * 
    * Scenario 2: ADD bridges multiple ranges (merge)
    * Existing: [20251001-20251012, 350.00] + [20251022-20251030, 350.00]
    * ADD:      [20251010-20251024, 400.00]
-   * Result:   [20251001-20251010, 350.00] + [20251010-20251024, 400.00] + [20251024-20251030, 350.00]
+   * Result:   [20251001-20251009, 350.00] + [20251010-20251024, 400.00] + [20251025-20251030, 350.00]
    */
   private void handleAddAction(VillaPricingSchema villaPricingSchema, List<PricingRange> overlappingRanges, Update_PricingRange_WC_MLS_XAction xAction) {
     String addStartPeriod = xAction.getStartperiod();
@@ -186,8 +186,9 @@ public class PricingRangeUtilService {
       else if (comparePeriods(addStartPeriod, existingStart) <= 0 && 
                comparePeriods(addEndPeriod, existingEnd) < 0 &&
                comparePeriods(addEndPeriod, existingStart) > 0) {
-        // Preserve the part after ADD period
-        PricingRange preservedRange = createNewPricingRange(existingRange, addEndPeriod, existingEnd);
+        // Preserve the part after ADD period (inclusive dates require +1 day)
+        String preservedStart = addDaysToDate(addEndPeriod, 1);
+        PricingRange preservedRange = createNewPricingRange(existingRange, preservedStart, existingEnd);
         rangesToAdd.add(preservedRange);
       }
 
@@ -195,17 +196,21 @@ public class PricingRangeUtilService {
       else if (comparePeriods(addStartPeriod, existingStart) > 0 && 
                comparePeriods(addStartPeriod, existingEnd) < 0 &&
                comparePeriods(addEndPeriod, existingEnd) >= 0) {
-        // Preserve the part before ADD period
-        PricingRange preservedRange = createNewPricingRange(existingRange, existingStart, addStartPeriod);
+        // Preserve the part before ADD period (inclusive dates require -1 day)
+        String preservedEnd = addDaysToDate(addStartPeriod, -1);
+        PricingRange preservedRange = createNewPricingRange(existingRange, existingStart, preservedEnd);
         rangesToAdd.add(preservedRange);
       }
 
       // Case 4: ADD period is completely inside existing range (split into 2 parts)
       else if (comparePeriods(addStartPeriod, existingStart) > 0 && 
                comparePeriods(addEndPeriod, existingEnd) < 0) {
-        // Preserve parts before and after ADD period
-        PricingRange rangeBefore = createNewPricingRange(existingRange, existingStart, addStartPeriod);
-        PricingRange rangeAfter = createNewPricingRange(existingRange, addEndPeriod, existingEnd);
+        // Preserve parts before and after ADD period (inclusive dates require adjustment)
+        String beforeEnd = addDaysToDate(addStartPeriod, -1);
+        String afterStart = addDaysToDate(addEndPeriod, 1);
+        
+        PricingRange rangeBefore = createNewPricingRange(existingRange, existingStart, beforeEnd);
+        PricingRange rangeAfter = createNewPricingRange(existingRange, afterStart, existingEnd);
         rangesToAdd.add(rangeBefore);
         rangesToAdd.add(rangeAfter);
       }
@@ -243,5 +248,32 @@ public class PricingRangeUtilService {
    */
   private int comparePeriods(String period1, String period2) {
     return period1.compareTo(period2);
+  }
+
+  /**
+   * Adds or subtracts days from a date string in YYYYMMDD format
+   * @param dateStr The date string in YYYYMMDD format
+   * @param days Number of days to add (positive) or subtract (negative)
+   * @return The resulting date string in YYYYMMDD format
+   */
+  private String addDaysToDate(String dateStr, int days) {
+    try {
+      // Parse the date string
+      int year = Integer.parseInt(dateStr.substring(0, 4));
+      int month = Integer.parseInt(dateStr.substring(4, 6));
+      int day = Integer.parseInt(dateStr.substring(6, 8));
+      
+      // Create LocalDate and add/subtract days
+      java.time.LocalDate date = java.time.LocalDate.of(year, month, day);
+      java.time.LocalDate newDate = date.plusDays(days);
+      
+      // Format back to YYYYMMDD
+      return String.format("%04d%02d%02d", 
+          newDate.getYear(), 
+          newDate.getMonthValue(), 
+          newDate.getDayOfMonth());
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid date format: " + dateStr, e);
+    }
   }
 }
