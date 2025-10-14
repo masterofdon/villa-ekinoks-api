@@ -86,9 +86,9 @@ public class VillaBookingController {
   @VillaEkinoksAuthorized
   public GenericApiResponse<Page<VillaBookingSummaryView>> getVillaBookings(
       @RequestParam String villaid,
-      @RequestParam String startdate,
-      @RequestParam String enddate,
-      @RequestParam String query,
+      @RequestParam(required = false) String startdate,
+      @RequestParam(required = false) String enddate,
+      @RequestParam(required = false) String query,
       Pageable pageable) {
     List<VillaBookingSummaryView> bookings = villaBookingService
         .getAll(new String[] { villaid }, startdate, enddate, query, pageable).stream()
@@ -182,8 +182,7 @@ public class VillaBookingController {
           xAction.getInquiror_email(),
           xAction.getInquiror_phonenumber(),
           xAction.getInquiror_locale(),
-          xAction.getInquiror_currency()
-          );
+          xAction.getInquiror_currency());
     }
 
     booking.setInquiror(inquiror);
@@ -317,12 +316,12 @@ public class VillaBookingController {
 
       // Send notification email to villa owner
       try {
-        if (booking.getVilla().getOwner() != null && 
-            booking.getVilla().getOwner().getPersonalinfo() != null && 
+        if (booking.getVilla().getOwner() != null &&
+            booking.getVilla().getOwner().getPersonalinfo() != null &&
             booking.getVilla().getOwner().getPersonalinfo().getEmail() != null) {
           this.asyncEmailService.sendBookingConfirmedOwnerEmailAsync(
-              booking, 
-              booking.getVilla().getOwner().getPersonalinfo().getEmail(), 
+              booking,
+              booking.getVilla().getOwner().getPersonalinfo().getEmail(),
               "en");
         }
       } catch (Exception e) {
