@@ -116,7 +116,8 @@ public class VillaStatsScheduler {
             return java.time.temporal.ChronoUnit.DAYS.between(bookingStart, bookingEnd) + 1;
           })
           .reduce(0L, Long::sum);
-      occupancyRateStat.setValue(String.valueOf((double) totalBookedDays / totalDaysInYear * 100));
+      double occupancyRate = (double) totalBookedDays / totalDaysInYear * 100;
+      occupancyRateStat.setValue(String.format("%.2f", occupancyRate));
       occupancyRateStat.setPrefix("");
       occupancyRateStat.setSuffix("%");
       occupancyRateStat.setColor("orange");
