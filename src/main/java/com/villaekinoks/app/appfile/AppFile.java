@@ -26,6 +26,8 @@ public class AppFile {
 
   private String extension;
 
+  private String mimetype;
+
   @Enumerated(EnumType.STRING)
   private AppFileType type;
 
