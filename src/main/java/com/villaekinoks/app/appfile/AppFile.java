@@ -3,6 +3,8 @@ package com.villaekinoks.app.appfile;
 import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +18,17 @@ public class AppFile {
   @UuidGenerator
   private String id;
 
-  private String filename;
+  private Long creationdate;
 
-  private String filetype;
+  private String name;
+
+  private String url;
+
+  private String extension;
+
+  @Enumerated(EnumType.STRING)
+  private AppFileType type;
+
+  private String uploaderid;
 
 }
