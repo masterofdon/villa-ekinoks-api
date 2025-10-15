@@ -50,4 +50,7 @@ public class DiscountCode {
   @Enumerated(EnumType.STRING)
   private DiscountCodeStatus status;
 
+  @Enumerated(EnumType.STRING)
+  private DiscountCodeUsageType usagetype;
+
 }

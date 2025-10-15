@@ -73,6 +73,7 @@ public class DiscountCodeController {
       code.setCreatedby(sUser);
       code.setDiscounttype(xAction.getType());
       code.setValue(xAction.getValue());
+      code.setUsagetype(xAction.getUsagetype());
       code.setStatus(DiscountCodeStatus.ACTIVE);
       code = this.discountCodeService.create(code);
     }
