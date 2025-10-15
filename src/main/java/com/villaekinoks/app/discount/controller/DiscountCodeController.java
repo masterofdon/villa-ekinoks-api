@@ -101,7 +101,7 @@ public class DiscountCodeController {
     throw new NotAuthorizedException();
   }
 
-  @PutMapping("/{id}/change-status")
+  @PutMapping("/{id}/status")
   public GenericApiResponse<Update_DiscountCodeStatus_WC_MLS_XAction_Response> changeStatus(
       @PathVariable String id, @RequestBody Update_DiscountCodeStatus_WC_MLS_XAction xAction) {
 
