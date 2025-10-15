@@ -14,6 +14,7 @@ import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.discount.DiscountCode;
 import com.villaekinoks.app.discount.DiscountCodeStatus;
 import com.villaekinoks.app.discount.response.Create_DiscountCode_WC_MLS_XAction_Response;
+import com.villaekinoks.app.discount.response.Get_DiscountCode_WC_MLS_XAction_Response;
 import com.villaekinoks.app.discount.service.DiscountCodeService;
 import com.villaekinoks.app.discount.xaction.Create_DiscountCode_WC_MLS_XAction;
 import com.villaekinoks.app.exception.NotAuthorizedException;
@@ -38,7 +39,7 @@ public class DiscountCodeController {
 
   @GetMapping
   @VillaEkinoksAuthorized
-  public GenericApiResponse<List<DiscountCode>> getAll(@RequestParam String villaid) {
+  public GenericApiResponse<Get_DiscountCode_WC_MLS_XAction_Response> getAll(@RequestParam String villaid) {
 
     List<DiscountCode> codes = this.discountCodeService.getAll(villaid);
 
@@ -46,7 +47,7 @@ public class DiscountCodeController {
         HttpStatus.OK.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         "200#019491",
-        codes);
+        new Get_DiscountCode_WC_MLS_XAction_Response(codes));
   }
 
   @PostMapping
