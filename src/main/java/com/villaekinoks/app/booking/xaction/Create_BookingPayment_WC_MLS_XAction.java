@@ -12,6 +12,8 @@ import lombok.Setter;
 @Getter
 public class Create_BookingPayment_WC_MLS_XAction {
 
+  private String discountcode;
+
   private String cardholdername;
 
   private String cardnumber;
