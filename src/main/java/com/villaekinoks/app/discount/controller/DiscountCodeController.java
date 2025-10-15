@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
 import com.villaekinoks.app.discount.DiscountCode;
 import com.villaekinoks.app.discount.DiscountCodeStatus;
+import com.villaekinoks.app.discount.DiscountCodeTimestamps;
 import com.villaekinoks.app.discount.response.Create_DiscountCode_WC_MLS_XAction_Response;
 import com.villaekinoks.app.discount.response.Get_DiscountCode_WC_MLS_XAction_Response;
 import com.villaekinoks.app.discount.service.DiscountCodeService;
@@ -23,6 +24,7 @@ import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.user.VillaAdminUser;
 import com.villaekinoks.app.utils.RandomizerUtils;
+import com.villaekinoks.app.utils.TimeUtils;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 
@@ -75,6 +77,13 @@ public class DiscountCodeController {
       code.setValue(xAction.getValue());
       code.setUsagetype(xAction.getUsagetype());
       code.setStatus(DiscountCodeStatus.ACTIVE);
+
+      DiscountCodeTimestamps timestamps = new DiscountCodeTimestamps();
+      timestamps.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
+      timestamps.setExpirationdate(xAction.getExpirationdate());
+      timestamps.setCode(code);
+      code.setTimestamps(timestamps);
+
       code = this.discountCodeService.create(code);
 
       return new GenericApiResponse<>(
