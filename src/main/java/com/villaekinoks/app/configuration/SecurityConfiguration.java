@@ -40,6 +40,7 @@ public class SecurityConfiguration {
                   baseUrl + "/villa-calendars/**",
                   baseUrl + "/villa-bookings/**",
                   baseUrl + "/villa-pricing/**",
+                  baseUrl + "/discount-code-checker/**",
                   baseUrl + "/servicable-items/**",
                   baseUrl + "/villas/**",
                   baseUrl + "/anomaly/**",
