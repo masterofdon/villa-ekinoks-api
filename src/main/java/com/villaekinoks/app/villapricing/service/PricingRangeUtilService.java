@@ -33,6 +33,11 @@ import lombok.RequiredArgsConstructor;
  * Delete:   [20251011 - 20251020] (delete middle range with different price)
  * Result:   [20251001 - 20251031, 350.00] (ranges become adjacent and consolidated)
  * 
+ * Scenario 4: Single Date Deletion (inclusive)
+ * Existing: [20251001 - 20251031]
+ * Delete:   [20251015 - 20251015] (single date deletion)
+ * Result:   [20251001 - 20251014] + [20251016 - 20251031]
+ * 
  * ADDITION SCENARIOS:
  * 
  * Scenario 1: ADD completely inside existing range (split into 3 ranges)
@@ -89,6 +94,12 @@ public class PricingRangeUtilService {
 
   /**
    * Handles DELETE action - removes the specified period from existing ranges
+   * 
+   * Special handling for single date deletion (deleteStartPeriod == deleteEndPeriod):
+   * - At range start: Case 2 (creates one remaining range)
+   * - At range end: Case 3 (creates one remaining range)  
+   * - In middle: Case 4 (creates two remaining ranges)
+   * - Entire range: Case 1 (deletes entire range)
    */
   private void handleDeleteAction(VillaPricingSchema villaPricingSchema, List<PricingRange> overlappingRanges, String deleteStartPeriod, String deleteEndPeriod) {
     List<PricingRange> rangesToDelete = new ArrayList<>();
@@ -108,18 +119,20 @@ public class PricingRangeUtilService {
       }
 
       // Case 2: Delete period is at the beginning of existing range
+      // For single date: deleteStartPeriod == deleteEndPeriod == existingStart
       if (comparePeriods(deleteStartPeriod, existingStart) <= 0 && 
           comparePeriods(deleteEndPeriod, existingEnd) < 0 &&
-          comparePeriods(deleteEndPeriod, existingStart) > 0) {
+          comparePeriods(deleteEndPeriod, existingStart) >= 0) {
         // Create new range from day after deleteEndPeriod to existingEnd (inclusive deletion)
         String newStart = addDaysToDate(deleteEndPeriod, 1);
         PricingRange newRange = createNewPricingRange(existingRange, newStart, existingEnd);
         rangesToAdd.add(newRange);
       }
 
-      // Case 3: Delete period is at the end of existing range
+      // Case 3: Delete period is at the end of existing range  
+      // For single date: deleteStartPeriod == deleteEndPeriod == existingEnd
       else if (comparePeriods(deleteStartPeriod, existingStart) > 0 && 
-               comparePeriods(deleteStartPeriod, existingEnd) < 0 &&
+               comparePeriods(deleteStartPeriod, existingEnd) <= 0 &&
                comparePeriods(deleteEndPeriod, existingEnd) >= 0) {
         // Create new range from existingStart to day before deleteStartPeriod (inclusive deletion)
         String newEnd = addDaysToDate(deleteStartPeriod, -1);
@@ -128,6 +141,7 @@ public class PricingRangeUtilService {
       }
 
       // Case 4: Delete period is in the middle of existing range
+      // For single date: existingStart < deleteStartPeriod == deleteEndPeriod < existingEnd
       else if (comparePeriods(deleteStartPeriod, existingStart) > 0 && 
                comparePeriods(deleteEndPeriod, existingEnd) < 0) {
         // Create two new ranges: before and after the deleted period (inclusive deletion)

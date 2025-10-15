@@ -228,6 +228,108 @@ class PricingRangeUtilServiceTest {
         verify(pricingRangeService).findAllByVillaPricingSchemaOrderByStartperiod(anyString());
     }
 
+    @Test
+    void testDeleteAction_SingleDate_InclusiveDeletion() {
+        // Arrange: Single range [20251001 - 20251031]
+        // Delete: Single date [20251015 - 20251015] (same start and end date)
+        // Expected: [20251001 - 20251014] + [20251016 - 20251031]
+        
+        PricingRange existingRange = createPricingRange("20251001", "20251031", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList(existingRange));
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty for consolidation
+
+        Update_PricingRange_WC_MLS_XAction deleteAction = createDeleteAction("20251015", "20251015");
+
+        // Act: Delete single date (inclusive)
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, deleteAction);
+
+        // Assert: Should split into two ranges around the deleted date
+        verify(pricingRangeService).delete(existingRange);
+        verify(pricingRangeService, times(2)).save(any(PricingRange.class));
+        
+        // Verify the split ranges exclude the deleted date
+        verify(pricingRangeService).save(argThat(range -> 
+            "20251001".equals(range.getStartperiod()) && "20251014".equals(range.getEndperiod())));
+        verify(pricingRangeService).save(argThat(range -> 
+            "20251016".equals(range.getStartperiod()) && "20251031".equals(range.getEndperiod())));
+    }
+
+    @Test
+    void testDeleteAction_SingleDate_AtRangeStart() {
+        // Arrange: Single range [20251001 - 20251031]
+        // Delete: First date [20251001 - 20251001]
+        // Expected: [20251002 - 20251031]
+        
+        PricingRange existingRange = createPricingRange("20251001", "20251031", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList(existingRange));
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty for consolidation
+
+        Update_PricingRange_WC_MLS_XAction deleteAction = createDeleteAction("20251001", "20251001");
+
+        // Act: Delete first date
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, deleteAction);
+
+        // Assert: Should create one range starting from the next day
+        verify(pricingRangeService).delete(existingRange);
+        verify(pricingRangeService, times(1)).save(any(PricingRange.class));
+        
+        // Verify the remaining range starts from the day after deleted date
+        verify(pricingRangeService).save(argThat(range -> 
+            "20251002".equals(range.getStartperiod()) && "20251031".equals(range.getEndperiod())));
+    }
+
+    @Test
+    void testDeleteAction_SingleDate_AtRangeEnd() {
+        // Arrange: Single range [20251001 - 20251031]
+        // Delete: Last date [20251031 - 20251031]
+        // Expected: [20251001 - 20251030]
+        
+        PricingRange existingRange = createPricingRange("20251001", "20251031", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList(existingRange));
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty for consolidation
+
+        Update_PricingRange_WC_MLS_XAction deleteAction = createDeleteAction("20251031", "20251031");
+
+        // Act: Delete last date
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, deleteAction);
+
+        // Assert: Should create one range ending at the day before deleted date
+        verify(pricingRangeService).delete(existingRange);
+        verify(pricingRangeService, times(1)).save(any(PricingRange.class));
+        
+        // Verify the remaining range ends at the day before deleted date
+        verify(pricingRangeService).save(argThat(range -> 
+            "20251001".equals(range.getStartperiod()) && "20251030".equals(range.getEndperiod())));
+    }
+
+    @Test
+    void testDeleteAction_SingleDate_EntireRange() {
+        // Arrange: Single day range [20251015 - 20251015]
+        // Delete: Same single date [20251015 - 20251015]
+        // Expected: Range should be completely deleted
+        
+        PricingRange existingRange = createPricingRange("20251015", "20251015", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList(existingRange));
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty for consolidation
+
+        Update_PricingRange_WC_MLS_XAction deleteAction = createDeleteAction("20251015", "20251015");
+
+        // Act: Delete the entire single-day range
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, deleteAction);
+
+        // Assert: Should delete the range completely, no new ranges created
+        verify(pricingRangeService).delete(existingRange);
+        verify(pricingRangeService, never()).save(any(PricingRange.class));
+    }
+
     private PricingRange createPricingRange(String startPeriod, String endPeriod, String amount) {
         PricingRange range = new PricingRange();
         range.setStartperiod(startPeriod);
