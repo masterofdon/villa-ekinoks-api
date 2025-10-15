@@ -194,6 +194,10 @@ public class PricingRangeUtilService {
       newRange.setPricepernight(xAction.getPricepernight());
       newRange.setVillapricingschema(villaPricingSchema);
       pricingRangeService.save(newRange);
+      
+      // Still need to consolidate adjacent ranges even if no overlaps
+      // This is critical for cases where adjacent ranges with same price are added separately
+      consolidateAdjacentRanges(villaPricingSchema);
       return;
     }
 

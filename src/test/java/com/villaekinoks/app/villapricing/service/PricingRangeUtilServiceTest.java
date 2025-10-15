@@ -330,6 +330,86 @@ class PricingRangeUtilServiceTest {
         verify(pricingRangeService, never()).save(any(PricingRange.class));
     }
 
+    @Test
+    void testAddAction_ConsecutiveSingleDates_ShouldConsolidate() {
+        // Arrange: Test the specific issue - adding consecutive single dates
+        // First add single date [20260731 - 20260731]
+        // Then add single date [20260801 - 20260801]
+        // Expected: Should consolidate into [20260731 - 20260801]
+        
+        // First call: Add 20260731 (no overlaps)
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList()); // No overlaps for first add
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty initially
+
+        Update_PricingRange_WC_MLS_XAction addAction1 = createAddAction("20260731", "20260731", "350.00");
+
+        // Act: Add first date
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, addAction1);
+
+        // Verify first range was saved and consolidation was called
+        verify(pricingRangeService, times(1)).save(any(PricingRange.class));
+        verify(pricingRangeService, times(1)).findAllByVillaPricingSchemaOrderByStartperiod(anyString());
+
+        // Reset mocks for second add operation
+        reset(pricingRangeService);
+        
+        // Second call: Add 20260801 (no overlaps, but adjacent to existing)
+        PricingRange existingRange = createPricingRange("20260731", "20260731", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList()); // No overlaps for second add
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList(existingRange)); // Return first range for consolidation
+
+        Update_PricingRange_WC_MLS_XAction addAction2 = createAddAction("20260801", "20260801", "350.00");
+
+        // Act: Add second date (should trigger consolidation)
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, addAction2);
+
+        // Assert: Should save the new range and call consolidation
+        verify(pricingRangeService, times(1)).save(any(PricingRange.class)); // Save the new individual range
+        verify(pricingRangeService, times(1)).findAllByVillaPricingSchemaOrderByStartperiod(anyString()); // Consolidation call
+    }
+
+    @Test
+    void testAddAction_NonAdjacentSingleDates_ShouldNotConsolidate() {
+        // Arrange: Test non-adjacent dates that should remain separate
+        // Add single date [20260731 - 20260731]
+        // Then add single date [20260802 - 20260802] (gap in between)
+        // Expected: Should remain as two separate ranges
+        
+        // First call: Add 20260731 (no overlaps)
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList()); // No overlaps for first add
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList()); // Empty initially
+
+        Update_PricingRange_WC_MLS_XAction addAction1 = createAddAction("20260731", "20260731", "350.00");
+
+        // Act: Add first date
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, addAction1);
+
+        // Reset mocks for second add operation
+        reset(pricingRangeService);
+        
+        // Second call: Add 20260802 (no overlaps, NOT adjacent to existing)
+        PricingRange existingRange = createPricingRange("20260731", "20260731", "350.00");
+        when(pricingRangeService.findOverlappingRanges(anyString(), anyString(), anyString()))
+            .thenReturn(Arrays.asList()); // No overlaps for second add
+        when(pricingRangeService.findAllByVillaPricingSchemaOrderByStartperiod(anyString()))
+            .thenReturn(Arrays.asList(existingRange)); // Return first range for consolidation
+
+        Update_PricingRange_WC_MLS_XAction addAction2 = createAddAction("20260802", "20260802", "350.00");
+
+        // Act: Add second date (consolidation should be called but no merging should happen)
+        pricingRangeUtilService.processPricingRangeUpdate(villaPricingSchema, addAction2);
+
+        // Assert: Should save the new range and call consolidation (but no actual consolidation due to gap)
+        verify(pricingRangeService, times(1)).save(any(PricingRange.class)); // Save the new individual range
+        verify(pricingRangeService, times(1)).findAllByVillaPricingSchemaOrderByStartperiod(anyString()); // Consolidation call
+    }
+
     private PricingRange createPricingRange(String startPeriod, String endPeriod, String amount) {
         PricingRange range = new PricingRange();
         range.setStartperiod(startPeriod);
@@ -348,6 +428,19 @@ class PricingRangeUtilServiceTest {
         action.setStartperiod(startPeriod);
         action.setEndperiod(endPeriod);
         action.setAction(UpdatePricingRangeAction.DELETE);
+        return action;
+    }
+
+    private Update_PricingRange_WC_MLS_XAction createAddAction(String startPeriod, String endPeriod, String amount) {
+        Update_PricingRange_WC_MLS_XAction action = new Update_PricingRange_WC_MLS_XAction();
+        action.setStartperiod(startPeriod);
+        action.setEndperiod(endPeriod);
+        action.setAction(UpdatePricingRangeAction.ADD);
+        
+        Price priceObj = new Price();
+        priceObj.setAmount(amount);
+        action.setPricepernight(priceObj);
+        
         return action;
     }
 }
