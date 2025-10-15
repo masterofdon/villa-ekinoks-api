@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,8 +19,10 @@ import com.villaekinoks.app.discount.DiscountCodeStatus;
 import com.villaekinoks.app.discount.DiscountCodeTimestamps;
 import com.villaekinoks.app.discount.response.Create_DiscountCode_WC_MLS_XAction_Response;
 import com.villaekinoks.app.discount.response.Get_DiscountCode_WC_MLS_XAction_Response;
+import com.villaekinoks.app.discount.response.Update_DiscountCodeStatus_WC_MLS_XAction_Response;
 import com.villaekinoks.app.discount.service.DiscountCodeService;
 import com.villaekinoks.app.discount.xaction.Create_DiscountCode_WC_MLS_XAction;
+import com.villaekinoks.app.discount.xaction.Update_DiscountCodeStatus_WC_MLS_XAction;
 import com.villaekinoks.app.exception.NotAuthorizedException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
@@ -92,6 +96,35 @@ public class DiscountCodeController {
           GenericApiResponseMessages.Generic.SUCCESS,
           "201#019492",
           new Create_DiscountCode_WC_MLS_XAction_Response(code.getId()));
+    }
+
+    throw new NotAuthorizedException();
+  }
+
+  @PutMapping("/{id}/change-status")
+  public GenericApiResponse<Update_DiscountCodeStatus_WC_MLS_XAction_Response> changeStatus(
+      @PathVariable String id, @RequestBody Update_DiscountCodeStatus_WC_MLS_XAction xAction) {
+
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (principal instanceof VillaAdminUser sUser) {
+
+      DiscountCode code = this.discountCodeService.getById(id);
+      if (code == null) {
+        throw new NotFoundException();
+      }
+
+      if (sUser.getVilla() == null || !sUser.getVilla().getId().equals(code.getVilla().getId())) {
+        throw new NotAuthorizedException();
+      }
+
+      code.setStatus(xAction.getStatus());
+      code = this.discountCodeService.create(code);
+
+      return new GenericApiResponse<>(
+          HttpStatus.OK.value(),
+          GenericApiResponseMessages.Generic.SUCCESS,
+          "200#019493",
+          new Update_DiscountCodeStatus_WC_MLS_XAction_Response(code.getId()));
     }
 
     throw new NotAuthorizedException();
