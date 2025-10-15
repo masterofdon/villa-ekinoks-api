@@ -1,6 +1,7 @@
 package com.villaekinoks.app.booking.view;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -9,6 +10,7 @@ import com.villaekinoks.app.booking.VillaBookingAdditionalService;
 import com.villaekinoks.app.booking.VillaBookingStatus;
 import com.villaekinoks.app.booking.VillaBookingTimestamps;
 import com.villaekinoks.app.payment.Payment;
+import com.villaekinoks.app.servicableitem.ServicableItemStatus;
 import com.villaekinoks.app.user.VillaGuestUser;
 
 import lombok.AllArgsConstructor;
@@ -50,7 +52,10 @@ public class VillaBookingSummaryView {
     view.setEnddate(entity.getEnddate());
     view.setStatus(entity.getStatus());
     view.setInquiror(entity.getInquiror());
-    view.setServices(entity.getServices());
+    if (entity.getServices() != null) {
+      view.setServices(entity.getServices().stream().filter(e -> e.getItem().getStatus() == ServicableItemStatus.ACTIVE)
+          .collect(Collectors.toSet()));
+    }
     view.setBookingpayment(entity.getBookingpayment());
     view.setNumberofguests(entity.getNumberofguests());
     return view;
