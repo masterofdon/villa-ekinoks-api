@@ -18,15 +18,20 @@ import lombok.RequiredArgsConstructor;
  * 
  * DELETION SCENARIOS:
  * 
- * Scenario 1: Simple Split
+ * Scenario 1: Simple Split (inclusive deletion)
  * Existing: [20251001 - 20251031]
- * Delete:   [20251005 - 20251012]
- * Result:   [20251001 - 20251005] + [20251012 - 20251031]
+ * Delete:   [20251005 - 20251012] (inclusive: deletes 20251005 through 20251012)
+ * Result:   [20251001 - 20251004] + [20251013 - 20251031]
  * 
- * Scenario 2: Complex Multi-Range Split
+ * Scenario 2: Complex Multi-Range Split (inclusive deletion)
  * Existing: [20251001 - 20251012] + [20251018 - 20251026]
- * Delete:   [20251008 - 20251022]
- * Result:   [20251001 - 20251008] + [20251022 - 20251026]
+ * Delete:   [20251008 - 20251022] (inclusive: deletes 20251008 through 20251022)
+ * Result:   [20251001 - 20251007] + [20251023 - 20251026]
+ * 
+ * Scenario 3: Deletion with Consolidation
+ * Existing: [20251001 - 20251010, 350.00] + [20251011 - 20251020, 400.00] + [20251021 - 20251031, 350.00]
+ * Delete:   [20251011 - 20251020] (delete middle range with different price)
+ * Result:   [20251001 - 20251031, 350.00] (ranges become adjacent and consolidated)
  * 
  * ADDITION SCENARIOS:
  * 
@@ -106,8 +111,9 @@ public class PricingRangeUtilService {
       if (comparePeriods(deleteStartPeriod, existingStart) <= 0 && 
           comparePeriods(deleteEndPeriod, existingEnd) < 0 &&
           comparePeriods(deleteEndPeriod, existingStart) > 0) {
-        // Create new range from deleteEndPeriod to existingEnd
-        PricingRange newRange = createNewPricingRange(existingRange, deleteEndPeriod, existingEnd);
+        // Create new range from day after deleteEndPeriod to existingEnd (inclusive deletion)
+        String newStart = addDaysToDate(deleteEndPeriod, 1);
+        PricingRange newRange = createNewPricingRange(existingRange, newStart, existingEnd);
         rangesToAdd.add(newRange);
       }
 
@@ -115,17 +121,20 @@ public class PricingRangeUtilService {
       else if (comparePeriods(deleteStartPeriod, existingStart) > 0 && 
                comparePeriods(deleteStartPeriod, existingEnd) < 0 &&
                comparePeriods(deleteEndPeriod, existingEnd) >= 0) {
-        // Create new range from existingStart to deleteStartPeriod
-        PricingRange newRange = createNewPricingRange(existingRange, existingStart, deleteStartPeriod);
+        // Create new range from existingStart to day before deleteStartPeriod (inclusive deletion)
+        String newEnd = addDaysToDate(deleteStartPeriod, -1);
+        PricingRange newRange = createNewPricingRange(existingRange, existingStart, newEnd);
         rangesToAdd.add(newRange);
       }
 
       // Case 4: Delete period is in the middle of existing range
       else if (comparePeriods(deleteStartPeriod, existingStart) > 0 && 
                comparePeriods(deleteEndPeriod, existingEnd) < 0) {
-        // Create two new ranges: before and after the deleted period
-        PricingRange rangeBefore = createNewPricingRange(existingRange, existingStart, deleteStartPeriod);
-        PricingRange rangeAfter = createNewPricingRange(existingRange, deleteEndPeriod, existingEnd);
+        // Create two new ranges: before and after the deleted period (inclusive deletion)
+        String beforeEnd = addDaysToDate(deleteStartPeriod, -1);
+        String afterStart = addDaysToDate(deleteEndPeriod, 1);
+        PricingRange rangeBefore = createNewPricingRange(existingRange, existingStart, beforeEnd);
+        PricingRange rangeAfter = createNewPricingRange(existingRange, afterStart, existingEnd);
         rangesToAdd.add(rangeBefore);
         rangesToAdd.add(rangeAfter);
       }
@@ -135,7 +144,12 @@ public class PricingRangeUtilService {
     rangesToDelete.forEach(pricingRangeService::delete);
     rangesToAdd.forEach(pricingRangeService::save);
     
+    // Force flush to ensure database changes are committed before consolidation
+    // This ensures consolidateAdjacentRanges sees the updated ranges
+    
     // Consolidate adjacent ranges with same price after deletion
+    // Note: This is critical for delete operations as they may create situations
+    // where previously separated ranges with same price become adjacent
     consolidateAdjacentRanges(villaPricingSchema);
   }
 
@@ -288,6 +302,9 @@ public class PricingRangeUtilService {
    * Consolidates adjacent pricing ranges with the same price into single ranges.
    * This method fetches all pricing ranges for the villa, sorts them by start period,
    * and merges consecutive ranges that have the same price.
+   * 
+   * This is especially important after DELETE operations as they may create situations
+   * where previously separated ranges with same price become adjacent.
    * 
    * @param villaPricingSchema The villa pricing schema to consolidate ranges for
    */
