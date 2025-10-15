@@ -76,6 +76,12 @@ public class DiscountCodeController {
       code.setUsagetype(xAction.getUsagetype());
       code.setStatus(DiscountCodeStatus.ACTIVE);
       code = this.discountCodeService.create(code);
+
+      return new GenericApiResponse<>(
+          HttpStatus.CREATED.value(),
+          GenericApiResponseMessages.Generic.SUCCESS,
+          "201#019492",
+          new Create_DiscountCode_WC_MLS_XAction_Response(code.getId()));
     }
 
     throw new NotAuthorizedException();
