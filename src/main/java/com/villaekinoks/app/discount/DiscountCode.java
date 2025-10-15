@@ -7,12 +7,14 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.villaekinoks.app.user.VillaAdminUser;
 import com.villaekinoks.app.villa.Villa;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,6 +38,9 @@ public class DiscountCode {
   @JoinColumn(name = "createdby_id", nullable = false)
   @JsonIncludeProperties({ "id", "personalinfo" })
   private VillaAdminUser createdby;
+
+  @OneToOne(mappedBy = "code", cascade = CascadeType.ALL, orphanRemoval = true)
+  private DiscountCodeTimestamps timestamps;
 
   @Enumerated(EnumType.STRING)
   private DiscountType discounttype;
