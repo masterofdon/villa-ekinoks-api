@@ -13,7 +13,7 @@ public interface PricingRangeRepository extends JpaRepository<PricingRange, Stri
       SELECT pr FROM PricingRange pr
       WHERE pr.villapricingschema.villa.id = :villaId
       AND pr.startperiod <= :startPeriod
-      AND pr.endperiod > :endPeriod
+      AND pr.endperiod >= :endPeriod
       """)
   PricingRange findVillasPriceInDate(
       String villaId,
