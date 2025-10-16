@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +19,10 @@ import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.servicableitem.ServicableItem;
 import com.villaekinoks.app.servicableitem.response.Create_ServicableItem_WC_MLS_XAction_Response;
+import com.villaekinoks.app.servicableitem.response.Update_ServicableItemStatus_WC_MLS_XAction_Response;
 import com.villaekinoks.app.servicableitem.service.ServicableItemService;
 import com.villaekinoks.app.servicableitem.xaction.Create_ServiceableItem_WC_MLS_XAction;
+import com.villaekinoks.app.servicableitem.xaction.Update_ServicableItemStatus_WC_MLS_XAction;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 
@@ -78,6 +81,27 @@ public class ServicableItemController {
 
     return new GenericApiResponse<>(
         HttpStatus.CREATED.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        "200#091841",
+        response);
+  }
+
+  @PutMapping("/{id}/status")
+  public GenericApiResponse<Update_ServicableItemStatus_WC_MLS_XAction_Response> updateServicableItemStatus(
+      @PathVariable String id,
+      @RequestBody Update_ServicableItemStatus_WC_MLS_XAction xAction) {
+    ServicableItem item = this.servicableItemService.getById(id);
+    if (item == null) {
+      throw new NotFoundException(
+          "Servicable item not found");
+    }
+    item.setStatus(xAction.getStatus());
+    ServicableItem updatedItem = this.servicableItemService.create(item);
+    Update_ServicableItemStatus_WC_MLS_XAction_Response response = new Update_ServicableItemStatus_WC_MLS_XAction_Response();
+    response.setId(updatedItem.getId());
+
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         "200#091841",
         response);

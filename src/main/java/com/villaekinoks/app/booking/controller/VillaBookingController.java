@@ -22,14 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.villaekinoks.app.booking.VillaBooking;
 import com.villaekinoks.app.booking.VillaBookingAdditionalService;
+import com.villaekinoks.app.booking.VillaBookingServicableItem;
 import com.villaekinoks.app.booking.VillaBookingStatus;
 import com.villaekinoks.app.booking.VillaBookingTimestamps;
 import com.villaekinoks.app.booking.response.Create_BookingPayment_WC_MLS_XAction_Response;
 import com.villaekinoks.app.booking.response.Create_VillaBooking_WC_MLS_XAction_Response;
-import com.villaekinoks.app.discount.DiscountCode;
-import com.villaekinoks.app.discount.DiscountCodeStatus;
-import com.villaekinoks.app.discount.DiscountType;
-import com.villaekinoks.app.discount.service.DiscountCodeService;
 import com.villaekinoks.app.booking.service.VillaBookingAdditionalServiceService;
 import com.villaekinoks.app.booking.service.VillaBookingService;
 import com.villaekinoks.app.booking.view.VillaBookingSummaryView;
@@ -37,6 +34,10 @@ import com.villaekinoks.app.booking.xaction.Create_BookingPayment_WC_MLS_XAction
 import com.villaekinoks.app.booking.xaction.Create_VillaBookingAdditionalService_WC_MLS_XAction;
 import com.villaekinoks.app.booking.xaction.Create_VillaBooking_WC_MLS_XAction;
 import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
+import com.villaekinoks.app.discount.DiscountCode;
+import com.villaekinoks.app.discount.DiscountCodeStatus;
+import com.villaekinoks.app.discount.DiscountType;
+import com.villaekinoks.app.discount.service.DiscountCodeService;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
@@ -203,7 +204,17 @@ public class VillaBookingController {
         }
         VillaBookingAdditionalService bookingService = new VillaBookingAdditionalService();
         bookingService.setBooking(booking);
-        bookingService.setItem(item);
+
+        VillaBookingServicableItem bookingItem = new VillaBookingServicableItem();
+        bookingItem.setName(item.getName());
+        bookingItem.setDescription(item.getDescription());
+        bookingItem.setPrice(item.getPrice());
+        bookingItem.setIconlink(item.getIconlink());
+        bookingItem.setUnit(item.getUnit());
+
+        bookingItem.setAdditionalservice(bookingService);
+
+        bookingService.setItem(bookingItem);
         bookingService.setQuantity(service.getQuantity());
         this.villaBookingAdditionalServiceService.create(bookingService);
       }
@@ -256,7 +267,7 @@ public class VillaBookingController {
       Set<VillaBookingAdditionalService> services = booking.getServices();
       if (services != null && services.size() > 0) {
         for (VillaBookingAdditionalService item : services) {
-          ServicableItem sItem = item.getItem();
+          VillaBookingServicableItem sItem = item.getItem();
           if (sItem != null) {
             BigDecimal itemTotal = new BigDecimal(sItem.getPrice().getAmount())
                 .multiply(new BigDecimal(item.getQuantity()));
@@ -390,7 +401,7 @@ public class VillaBookingController {
   private BigDecimal applyDiscountCode(String discountCode, String villaId, BigDecimal totalAmount) {
     // Find discount code for the specific villa
     DiscountCode code = discountCodeService.getByCodeAndVillaId(discountCode, villaId);
-    
+
     if (code == null) {
       throw new BadApiRequestException(
           "Invalid discount code: " + discountCode + " for this villa",
@@ -406,7 +417,7 @@ public class VillaBookingController {
 
     // Apply discount based on type
     BigDecimal discountedAmount = totalAmount;
-    
+
     if (code.getDiscounttype() == DiscountType.PERCENTAGE) {
       // Apply percentage discount
       BigDecimal discountPercentage = new BigDecimal(code.getValue());
@@ -416,7 +427,7 @@ public class VillaBookingController {
       // Apply fixed amount discount
       BigDecimal discountAmount = new BigDecimal(code.getValue());
       discountedAmount = totalAmount.subtract(discountAmount);
-      
+
       // Ensure the discounted amount is not negative
       if (discountedAmount.compareTo(BigDecimal.ZERO) < 0) {
         discountedAmount = BigDecimal.ZERO;
