@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.villaekinoks.app.availability.response.Post_ItemPricesBreakdown_Response;
 import com.villaekinoks.app.availability.view.PriceItem;
 import com.villaekinoks.app.availability.xaction.Post_ItemPricesBreakdown_XAction;
+import com.villaekinoks.app.booking.VillaBookingServicableItem;
+import com.villaekinoks.app.booking.service.VillaBookingServicableItemService;
 import com.villaekinoks.app.booking.xaction.Create_VillaBookingAdditionalService_WC_MLS_XAction;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.generic.entity.Price;
-import com.villaekinoks.app.servicableitem.ServicableItem;
-import com.villaekinoks.app.servicableitem.service.ServicableItemService;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villapricing.PricingRange;
@@ -39,7 +39,7 @@ public class PriceCheckerController {
 
   private final PricingRangeService pricingRangeService;
 
-  private final ServicableItemService servicableItemService;
+  private final VillaBookingServicableItemService villaBookingServicableItemService;
 
   @PostMapping("/check-item-prices")
   public GenericApiResponse<Post_ItemPricesBreakdown_Response> checkItemPrices(
@@ -82,7 +82,7 @@ public class PriceCheckerController {
 
     if (xAction.getAdditionalservices() != null) {
       for (Create_VillaBookingAdditionalService_WC_MLS_XAction item : xAction.getAdditionalservices()) {
-        ServicableItem sItem = this.servicableItemService.getById(item.getServicableitemid());
+        VillaBookingServicableItem sItem = this.villaBookingServicableItemService.getById(item.getServicableitemid());
         if (sItem != null) {
           BigDecimal itemTotal = new BigDecimal(sItem.getPrice().getAmount())
               .multiply(new BigDecimal(item.getQuantity()));
