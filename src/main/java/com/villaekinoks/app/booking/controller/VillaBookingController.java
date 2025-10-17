@@ -337,7 +337,9 @@ public class VillaBookingController {
           0);
 
       if (externalPayment.getStatus().equals("failure")) {
-        throw new IllegalStateException("Payment processing failed: " + externalPayment.getErrorMessage());
+        throw new BadApiRequestException(
+            "Payment processing failed: " + externalPayment.getErrorMessage(),
+            "400#085813");
       }
 
       payment.setExternalid(externalPayment.getPaymentId());
