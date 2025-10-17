@@ -26,6 +26,8 @@ public class VerificationPair {
 
   private Long expirationdate;
 
+  private String verificationdomain;
+
   @Enumerated(EnumType.STRING)
   private VerificationPairStatus status;
 }

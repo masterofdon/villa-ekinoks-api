@@ -34,10 +34,7 @@ import com.villaekinoks.app.booking.xaction.Create_BookingPayment_WC_MLS_XAction
 import com.villaekinoks.app.booking.xaction.Create_VillaBookingAdditionalService_WC_MLS_XAction;
 import com.villaekinoks.app.booking.xaction.Create_VillaBooking_WC_MLS_XAction;
 import com.villaekinoks.app.configuration.annotation.VillaEkinoksAuthorized;
-import com.villaekinoks.app.discount.DiscountCode;
-import com.villaekinoks.app.discount.DiscountCodeStatus;
-import com.villaekinoks.app.discount.DiscountType;
-import com.villaekinoks.app.discount.service.DiscountCodeService;
+import com.villaekinoks.app.discount.service.DiscountCodeUtilService;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.exception.NotFoundException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
@@ -49,10 +46,17 @@ import com.villaekinoks.app.payment.service.IyzicoPaymentProcessingService;
 import com.villaekinoks.app.payment.service.PaymentService;
 import com.villaekinoks.app.servicableitem.ServicableItem;
 import com.villaekinoks.app.servicableitem.service.ServicableItemService;
+import com.villaekinoks.app.user.LockStatus;
+import com.villaekinoks.app.user.OperationStatus;
+import com.villaekinoks.app.user.ServiceStatus;
+import com.villaekinoks.app.user.VerificationStatus;
 import com.villaekinoks.app.user.VillaGuestUser;
-import com.villaekinoks.app.user.service.VillaGuestUserRegistrationService;
 import com.villaekinoks.app.user.service.VillaGuestUserService;
+import com.villaekinoks.app.utils.IPUtils;
 import com.villaekinoks.app.utils.TimeUtils;
+import com.villaekinoks.app.verification.VerificationPair;
+import com.villaekinoks.app.verification.VerificationPairStatus;
+import com.villaekinoks.app.verification.service.VerificationPairService;
 import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villapricing.PricingRange;
@@ -77,8 +81,6 @@ public class VillaBookingController {
 
   private final PricingRangeService pricingRangeService;
 
-  private final VillaGuestUserRegistrationService villaGuestUserRegistrationService;
-
   private final PaymentService paymentService;
 
   private final VillaBookingAdditionalServiceService villaBookingAdditionalServiceService;
@@ -87,7 +89,9 @@ public class VillaBookingController {
 
   private final AsyncEmailService asyncEmailService;
 
-  private final DiscountCodeService discountCodeService;
+  private final DiscountCodeUtilService discountCodeUtilService;
+
+  private final VerificationPairService verificationPairService;
 
   @GetMapping
   @VillaEkinoksAuthorized
@@ -130,6 +134,42 @@ public class VillaBookingController {
   public GenericApiResponse<Create_VillaBooking_WC_MLS_XAction_Response> createVillaBooking(
       @RequestBody Create_VillaBooking_WC_MLS_XAction xAction) {
 
+    VerificationPair vPair = this.verificationPairService.getById(xAction.getVerificationid());
+    if (vPair == null) {
+      throw new BadApiRequestException("Invalid verification ID.", "400#0020");
+    }
+    if (!vPair.getVerificationcode().equals(xAction.getVerificationcode())) {
+      throw new BadApiRequestException("Invalid verification code.", "400#0021");
+    }
+
+    if (vPair.getExpirationdate() < TimeUtils.tsInstantNow().toEpochMilli()) {
+      throw new BadApiRequestException("Verification code has expired.", "400#0022");
+    }
+
+    VillaGuestUser inquiror = this.villaGuestUserService.getById(vPair.getId());
+    if (inquiror == null) {
+      throw new NotFoundException("Inquiror user not found.");
+    }
+
+    if (inquiror.getStatusset().getLockstatus() == LockStatus.LOCKED) {
+      inquiror.getStatusset().setLockstatus(LockStatus.UNLOCKED);
+    }
+    if (inquiror.getStatusset().getOperationstatus() == OperationStatus.DISABLED) {
+      inquiror.getStatusset().setOperationstatus(OperationStatus.ENABLED);
+    }
+
+    if (inquiror.getStatusset().getServicestatus() == ServiceStatus.INACTIVE) {
+      inquiror.getStatusset().setServicestatus(ServiceStatus.ACTIVE);
+    }
+
+    if (inquiror.getStatusset().getVerificationstatus() == VerificationStatus.PENDING) {
+      inquiror.getStatusset().setVerificationstatus(VerificationStatus.VERIFIED);
+      inquiror.getTimestamps().setVerificationdate(TimeUtils.tsInstantNow().toEpochMilli());
+    }
+    vPair.setStatus(VerificationPairStatus.VERIFIED);
+    vPair = this.verificationPairService.create(vPair);
+    inquiror = this.villaGuestUserService.create(inquiror);
+
     Villa villa = this.villaService.getById(xAction.getVillaid());
     if (villa == null) {
       throw new NotFoundException();
@@ -158,7 +198,6 @@ public class VillaBookingController {
             "No pricing available for date: " + dateString + ". Cannot create booking for dates without pricing.",
             "400#0013");
       }
-
       currentDate = currentDate.plusDays(1);
     }
 
@@ -176,21 +215,6 @@ public class VillaBookingController {
     booking.setTimestamps(timestamps);
 
     booking = this.villaBookingService.create(booking);
-
-    VillaGuestUser inquiror = this.villaGuestUserService.getByLogin(xAction.getInquiror_email());
-    if (inquiror == null) {
-      inquiror = this.villaGuestUserRegistrationService.registerNewUser(
-          xAction.getInquiror_email(),
-          xAction.getInquiror_email(),
-          xAction.getInquiror_firstname(),
-          xAction.getInquiror_middlename(),
-          xAction.getInquiror_lastname(),
-          xAction.getInquiror_identitynumber(),
-          xAction.getInquiror_email(),
-          xAction.getInquiror_phonenumber(),
-          xAction.getInquiror_locale(),
-          xAction.getInquiror_currency());
-    }
 
     booking.setInquiror(inquiror);
 
@@ -280,7 +304,8 @@ public class VillaBookingController {
 
       // Apply discount if provided
       if (xAction.getDiscountcode() != null && !xAction.getDiscountcode().trim().isEmpty()) {
-        totalAmount = applyDiscountCode(xAction.getDiscountcode(), booking.getVilla().getId(), totalAmount);
+        totalAmount = this.discountCodeUtilService.applyDiscountCode(xAction.getDiscountcode(),
+            booking.getVilla().getId(), totalAmount);
       }
 
       payment.setAmount(totalAmount.toPlainString());
@@ -297,7 +322,7 @@ public class VillaBookingController {
           booking.getInquiror().getPersonalinfo().getPhonenumber(),
           booking.getInquiror().getPersonalinfo().getEmail(),
           booking.getInquiror().getIdentitynumber(),
-          getClientIpAddress(request),
+          IPUtils.getClientIpAddress(request),
           xAction.getUseraddress(),
           xAction.getUsercity(),
           xAction.getUsercountry(),
@@ -375,65 +400,4 @@ public class VillaBookingController {
             booking.getBookingpayment().getId()));
   }
 
-  private String getClientIpAddress(HttpServletRequest request) {
-    String xForwardedFor = request.getHeader("X-Forwarded-For");
-    if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
-      return xForwardedFor.split(",")[0].trim();
-    }
-
-    String xRealIp = request.getHeader("X-Real-IP");
-    if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
-      return xRealIp;
-    }
-
-    return request.getRemoteAddr();
-  }
-
-  /**
-   * Validates and applies a discount code to the total amount
-   * 
-   * @param discountCode The discount code to validate
-   * @param villaId      The villa ID to validate against
-   * @param totalAmount  The original total amount
-   * @return The discounted total amount
-   * @throws BadApiRequestException if the discount code is invalid
-   */
-  private BigDecimal applyDiscountCode(String discountCode, String villaId, BigDecimal totalAmount) {
-    // Find discount code for the specific villa
-    DiscountCode code = discountCodeService.getByCodeAndVillaId(discountCode, villaId);
-
-    if (code == null) {
-      throw new BadApiRequestException(
-          "Invalid discount code: " + discountCode + " for this villa",
-          "400#INVALID_DISCOUNT_CODE");
-    }
-
-    // Check if discount code is active
-    if (code.getStatus() != DiscountCodeStatus.ACTIVE) {
-      throw new BadApiRequestException(
-          "Discount code " + discountCode + " is not active",
-          "400#INACTIVE_DISCOUNT_CODE");
-    }
-
-    // Apply discount based on type
-    BigDecimal discountedAmount = totalAmount;
-
-    if (code.getDiscounttype() == DiscountType.PERCENTAGE) {
-      // Apply percentage discount
-      BigDecimal discountPercentage = new BigDecimal(code.getValue());
-      BigDecimal discountAmount = totalAmount.multiply(discountPercentage).divide(new BigDecimal("100"));
-      discountedAmount = totalAmount.subtract(discountAmount);
-    } else if (code.getDiscounttype() == DiscountType.FIXED_AMOUNT) {
-      // Apply fixed amount discount
-      BigDecimal discountAmount = new BigDecimal(code.getValue());
-      discountedAmount = totalAmount.subtract(discountAmount);
-
-      // Ensure the discounted amount is not negative
-      if (discountedAmount.compareTo(BigDecimal.ZERO) < 0) {
-        discountedAmount = BigDecimal.ZERO;
-      }
-    }
-
-    return discountedAmount.setScale(2);
-  }
 }

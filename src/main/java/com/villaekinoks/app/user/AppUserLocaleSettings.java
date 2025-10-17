@@ -26,7 +26,7 @@ public class AppUserLocaleSettings {
   @JsonIgnore
   private AppUser user;
 
-  private String locale;
+  private String locale = "en_UK";
 
-  private Currency currency;
+  private Currency currency = Currency.EUR;
 }

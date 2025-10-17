@@ -1,8 +1,10 @@
 package com.villaekinoks.app.user.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.villaekinoks.app.generic.entity.Currency;
+import com.villaekinoks.app.generic.entity.DeleteStatus;
 import com.villaekinoks.app.user.AppUserLocaleSettings;
 import com.villaekinoks.app.user.AppUserPersonalInfo;
 import com.villaekinoks.app.user.AppUserTimeStamps;
@@ -23,6 +25,8 @@ public class VillaGuestUserRegistrationService {
 
   private final VillaGuestUserService villaGuestUserService;
 
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
   @Transactional
   public VillaGuestUser registerNewUser(
       String login,
@@ -36,31 +40,10 @@ public class VillaGuestUserRegistrationService {
       String locale,
       Currency currency) {
 
-    VillaGuestUser inquiror = new VillaGuestUser();
-    inquiror.setLogin(login);
-    inquiror.setPassword(password); // No password for guest users
-    inquiror.setIdentitynumber(identitynumber);
-
-    AppUserTimeStamps userTimestamps = new AppUserTimeStamps();
-    userTimestamps.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
-    userTimestamps.setUser(inquiror);
-
-    AppUserLocaleSettings localeSettings = new AppUserLocaleSettings();
-    localeSettings.setLocale(locale);
-    localeSettings.setCurrency(currency);
-    localeSettings.setUser(inquiror);
-
-    inquiror.setTimestamps(userTimestamps);
-    inquiror.setLocalesettings(localeSettings);
-
-    UserStatusSet statusSet = new UserStatusSet();
-    statusSet.setLockstatus(LockStatus.UNLOCKED);
-    statusSet.setOperationstatus(OperationStatus.ENABLED);
-    statusSet.setServicestatus(ServiceStatus.ACTIVE);
-    statusSet.setVerificationstatus(VerificationStatus.VERIFIED);
-    statusSet.setUser(inquiror);
-
-    inquiror.setStatusset(statusSet);
+    VillaGuestUser vGuestUser = new VillaGuestUser();
+    vGuestUser.setLogin(email);
+    vGuestUser.setPassword(bCryptPasswordEncoder.encode(password));
+    vGuestUser.setDeletestatus(DeleteStatus.NOTDELETED);
 
     AppUserPersonalInfo personalInfo = new AppUserPersonalInfo();
     personalInfo.setFirstname(firstname);
@@ -68,12 +51,29 @@ public class VillaGuestUserRegistrationService {
     personalInfo.setLastname(lastname);
     personalInfo.setEmail(email);
     personalInfo.setPhonenumber(phonenumber);
-    personalInfo.setUser(inquiror);
+    personalInfo.setUser(vGuestUser);
+    vGuestUser.setPersonalinfo(personalInfo);
 
-    inquiror.setPersonalinfo(personalInfo);
+    AppUserLocaleSettings localeSettings = new AppUserLocaleSettings();
+    localeSettings.setLocale(locale);
+    localeSettings.setCurrency(currency);
+    vGuestUser.setLocalesettings(localeSettings);
 
-    inquiror = this.villaGuestUserService.create(inquiror);
+    AppUserTimeStamps timeStamps = new AppUserTimeStamps();
+    timeStamps.setCreationdate(TimeUtils.tsInstantNow().toEpochMilli());
+    timeStamps.setUser(vGuestUser);
+    vGuestUser.setTimestamps(timeStamps);
 
-    return inquiror;
+    UserStatusSet statusSet = new UserStatusSet();
+    statusSet.setLockstatus(LockStatus.LOCKED);
+    statusSet.setOperationstatus(OperationStatus.DISABLED);
+    statusSet.setServicestatus(ServiceStatus.INACTIVE);
+    statusSet.setVerificationstatus(VerificationStatus.PENDING);
+    statusSet.setUser(vGuestUser);
+    vGuestUser.setStatusset(statusSet);
+
+    vGuestUser = this.villaGuestUserService.create(vGuestUser);
+
+    return vGuestUser;
   }
 }

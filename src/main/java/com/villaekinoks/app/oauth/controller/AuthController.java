@@ -60,7 +60,8 @@ public class AuthController {
     vPair.setExpirationdate(TimeUtils.tsInstantNow().toEpochMilli() + (5 * 60 * 1000)); // 5 minutes
     vPair.setStatus(VerificationPairStatus.PENDING);
     vPair.setVerificationcode(RandomizerUtils.getRandomNumeric(6));
-
+    vPair.setVerificationdomain("login");
+    
     vPair = this.verificationPairService.create(vPair);
 
     // Send verification code email asynchronously

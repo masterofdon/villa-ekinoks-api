@@ -47,6 +47,7 @@ public class SecurityConfiguration {
                   baseUrl + "/price-checker/**",
                   baseUrl + "/availability-check-controller/check-villa-availability/**",
                   baseUrl + "/user-registrations/system-admin-users/**",
+                  baseUrl + "/user-registrations/villa-guest-users/**",
                   baseUrl + "/app-users/forgot-password/**",
                   baseUrl + "/app-users/forget-password/verifications/**").permitAll();
               auth.requestMatchers(CorsUtils::isPreFlightRequest).permitAll();
