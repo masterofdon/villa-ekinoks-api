@@ -146,7 +146,7 @@ public class VillaBookingController {
       throw new BadApiRequestException("Verification code has expired.", "400#0022");
     }
 
-    VillaGuestUser inquiror = this.villaGuestUserService.getById(vPair.getId());
+    VillaGuestUser inquiror = this.villaGuestUserService.getById(vPair.getUserid());
     if (inquiror == null) {
       throw new NotFoundException("Inquiror user not found.");
     }
