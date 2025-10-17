@@ -24,6 +24,7 @@ import com.villaekinoks.app.user.service.VillaGuestUserService;
 import com.villaekinoks.app.utils.RandomizerUtils;
 import com.villaekinoks.app.utils.TimeUtils;
 import com.villaekinoks.app.verification.VerificationPair;
+import com.villaekinoks.app.verification.VerificationPairStatus;
 import com.villaekinoks.app.verification.service.VerificationPairService;
 
 import jakarta.transaction.Transactional;
@@ -68,12 +69,13 @@ public class VillaGuestUserRegistrationController {
     vPair.setExpirationdate(TimeUtils.tsInstantNow().toEpochMilli() + 24 * 60 * 60 * 1000); // 24 hours validity
     vPair.setVerificationcode(RandomizerUtils.getRandomNumeric(6));
     vPair.setVerificationdomain("guestuserregistration");
+    vPair.setStatus(VerificationPairStatus.PENDING);
     vPair = this.verificationPairService.create(vPair);
 
     // Send verification email asynchronously
     this.asyncEmailService.sendGuestUserRegistrationVerificationEmailAsync(
-        vGuestUser, 
-        vPair, 
+        vGuestUser,
+        vPair,
         xAction.getLocale());
 
     return new GenericApiResponse<>(
