@@ -1,8 +1,8 @@
 package com.villaekinoks.app.registration.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +42,7 @@ public class VillaGuestUserRegistrationController {
   @PostMapping
   @Transactional
   public GenericApiResponse<Create_VillaGuestUser_WC_MLS_XAction_Response> createVillaGuestUser(
-      Create_VillaGuestUser_WC_MLS_XAction xAction) {
+      @RequestBody Create_VillaGuestUser_WC_MLS_XAction xAction) {
 
     VillaGuestUser vGuestUser = this.villaGuestUserService.getByLogin(xAction.getEmail());
     if (vGuestUser == null) {
