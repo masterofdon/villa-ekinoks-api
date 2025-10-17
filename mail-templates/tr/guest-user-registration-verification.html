@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Doğrulama Kodu - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .welcome-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🎉 Villa Ekinoks'a Hoş Geldiniz!</h2>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-section">
+            <h3>✨ Kayıt İşlemi Neredeyse Tamamlandı!</h3>
+            <p>Sayın {{firstName}} {{lastName}},</p>
+            <p>Villa Ekinoks'a hoş geldiniz! Olağanüstü villa deneyimleri arayan gezginler topluluğumuza katıldığınız için heyecanlıyız.</p>
+        </div>
+        
+        <p>Kaydınızı tamamlamak ve hesabınızı etkinleştirmek için lütfen aşağıdaki doğrulama kodunu kullanarak e-posta adresinizi doğrulayın:</p>
+        
+        <div class="verification-code">
+            <h3>📧 E-posta Doğrulama Kodunuz</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ Bu kod 24 saat içinde geçerliliğini yitirir</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ Güvenlik Bilgileri</h3>
+            <p><strong>Kayıt Detayları:</strong></p>
+            <ul>
+                <li><strong>E-posta:</strong> {{email}}</li>
+                <li><strong>Kayıt Zamanı:</strong> {{registrationTime}}</li>
+                <li><strong>Hesap Türü:</strong> Villa Misafir Kullanıcısı</li>
+            </ul>
+            <p><strong>Önemli:</strong> Bu hesabı siz oluşturmadıysanız, bu e-postayı göz ardı edin veya destek ekibimizle iletişime geçin.</p>
+        </div>
+        
+        <p><strong>Hesabınızı doğrulama adımları:</strong></p>
+        <ol>
+            <li>Villa Ekinoks kayıt sayfasına geri dönün</li>
+            <li>Yukarıdaki 6 haneli doğrulama kodunu girin</li>
+            <li>Hesap etkinleştirme işlemini tamamlayın</li>
+            <li>Muhteşem villa destinasyonlarını keşfetmeye başlayın!</li>
+        </ol>
+        
+        <p><strong>Doğrulama sonrası avantajlarınız:</strong></p>
+        <ul>
+            <li>Villaları tam erişimle görüntüleme ve rezervasyon yapma</li>
+            <li>Tercihlerinize göre kişiselleştirilmiş öneriler</li>
+            <li>Özel indirimler ve yeni mülklere erken erişim</li>
+            <li>Rezervasyonlarınız için 7/24 müşteri desteği</li>
+        </ul>
+        
+        <p>Doğrulama işleminde sorun yaşıyorsanız, lütfen destek ekibimizle iletişime geçmekten çekinmeyin.</p>
+        
+        <p>Saygılarımızla,<br>
+        Villa Ekinoks Ekibi</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Bu doğrulama kodu yalnızca 24 saat geçerlidir. Bu kodu kimseyle paylaşmayın.</p>
+        <p><small>Bu hesabı siz oluşturmadıysanız, lütfen derhal destek ekibiyle iletişime geçin.</small></p>
+    </div>
+</body>
+</html>

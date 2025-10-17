@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.villaekinoks.app.exception.BadApiRequestException;
 import com.villaekinoks.app.generic.api.GenericApiResponse;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
+import com.villaekinoks.app.mail.service.AsyncEmailService;
 import com.villaekinoks.app.registration.response.Create_VillaGuestUserRegistrationVerification_WC_MLS_XAction_Response;
 import com.villaekinoks.app.registration.response.Create_VillaGuestUser_WC_MLS_XAction_Response;
 import com.villaekinoks.app.registration.xaction.Create_VillaGuestUserRegistrationVerification_WC_MLS_XAction;
@@ -39,6 +40,8 @@ public class VillaGuestUserRegistrationController {
 
   private final VerificationPairService verificationPairService;
 
+  private final AsyncEmailService asyncEmailService;
+
   @PostMapping
   @Transactional
   public GenericApiResponse<Create_VillaGuestUser_WC_MLS_XAction_Response> createVillaGuestUser(
@@ -66,6 +69,12 @@ public class VillaGuestUserRegistrationController {
     vPair.setVerificationcode(RandomizerUtils.getRandomNumeric(6));
     vPair.setVerificationdomain("guestuserregistration");
     vPair = this.verificationPairService.create(vPair);
+
+    // Send verification email asynchronously
+    this.asyncEmailService.sendGuestUserRegistrationVerificationEmailAsync(
+        vGuestUser, 
+        vPair, 
+        xAction.getLocale());
 
     return new GenericApiResponse<>(
         HttpStatus.CREATED.value(),

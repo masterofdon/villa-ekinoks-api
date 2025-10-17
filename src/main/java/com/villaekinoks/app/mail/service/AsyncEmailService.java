@@ -14,6 +14,7 @@ public class AsyncEmailService {
 
     private final BookingEmailService bookingEmailService;
     private final CampaignEmailService campaignEmailService;
+    private final GuestUserRegistrationEmailService guestUserRegistrationEmailService;
 
     @Async
     public CompletableFuture<Void> sendBookingPaymentSuccessEmailAsync(
@@ -61,6 +62,21 @@ public class AsyncEmailService {
             log.info("New campaign email sent asynchronously to: {}", recipientEmail);
         } catch (Exception e) {
             log.error("Failed to send new campaign email asynchronously to: {}", recipientEmail, e);
+        }
+        return CompletableFuture.completedFuture(null);
+    }
+
+    @Async
+    public CompletableFuture<Void> sendGuestUserRegistrationVerificationEmailAsync(
+            com.villaekinoks.app.user.VillaGuestUser guestUser, 
+            com.villaekinoks.app.verification.VerificationPair verificationPair, 
+            String locale) {
+        try {
+            guestUserRegistrationEmailService.sendRegistrationVerificationEmail(guestUser, verificationPair, locale);
+            log.info("Guest user registration verification email sent asynchronously to user ID: {}", guestUser.getId());
+        } catch (Exception e) {
+            log.error("Failed to send guest user registration verification email asynchronously to user ID: {}", 
+                     guestUser.getId(), e);
         }
         return CompletableFuture.completedFuture(null);
     }

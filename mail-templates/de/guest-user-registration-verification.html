@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrierung Bestätigungscode - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .welcome-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🎉 Willkommen bei Villa Ekinoks!</h2>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-section">
+            <h3>✨ Registrierung fast abgeschlossen!</h3>
+            <p>Liebe/r {{firstName}} {{lastName}},</p>
+            <p>Willkommen bei Villa Ekinoks! Wir freuen uns, Sie in unserer Gemeinschaft von Reisenden begrüßen zu dürfen, die außergewöhnliche Villa-Erlebnisse suchen.</p>
+        </div>
+        
+        <p>Um Ihre Registrierung abzuschließen und Ihr Konto zu aktivieren, verifizieren Sie bitte Ihre E-Mail-Adresse mit dem unten stehenden Bestätigungscode:</p>
+        
+        <div class="verification-code">
+            <h3>📧 Ihr E-Mail-Bestätigungscode</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ Dieser Code läuft in 24 Stunden ab</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ Sicherheitsinformationen</h3>
+            <p><strong>Registrierungsdetails:</strong></p>
+            <ul>
+                <li><strong>E-Mail:</strong> {{email}}</li>
+                <li><strong>Registrierungszeit:</strong> {{registrationTime}}</li>
+                <li><strong>Kontotyp:</strong> Villa-Gastbenutzer</li>
+            </ul>
+            <p><strong>Wichtig:</strong> Falls Sie dieses Konto nicht erstellt haben, ignorieren Sie diese E-Mail oder kontaktieren Sie unser Support-Team.</p>
+        </div>
+        
+        <p><strong>So verifizieren Sie Ihr Konto:</strong></p>
+        <ol>
+            <li>Kehren Sie zur Villa Ekinoks Registrierungsseite zurück</li>
+            <li>Geben Sie den 6-stelligen Bestätigungscode oben ein</li>
+            <li>Schließen Sie die Kontoaktivierung ab</li>
+            <li>Beginnen Sie mit der Erkundung fantastischer Villa-Destinationen!</li>
+        </ol>
+        
+        <p><strong>Was nach der Verifizierung passiert:</strong></p>
+        <ul>
+            <li>Vollzugriff zum Durchsuchen und Buchen von Villen</li>
+            <li>Personalisierte Empfehlungen basierend auf Ihren Vorlieben</li>
+            <li>Exklusive Angebote und frühzeitiger Zugang zu neuen Immobilien</li>
+            <li>24/7 Kundensupport für Ihre Buchungen</li>
+        </ul>
+        
+        <p>Falls Sie Schwierigkeiten mit dem Verifizierungsprozess haben, zögern Sie bitte nicht, unser Support-Team zu kontaktieren.</p>
+        
+        <p>Mit freundlichen Grüßen,<br>
+        Das Villa Ekinoks Team</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>Dieser Bestätigungscode ist nur 24 Stunden gültig. Teilen Sie diesen Code mit niemandem.</p>
+        <p><small>Falls Sie sich nicht für dieses Konto registriert haben, kontaktieren Sie bitte sofort den Support.</small></p>
+    </div>
+</body>
+</html>

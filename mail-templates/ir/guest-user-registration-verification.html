@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کد تأیید ثبت نام - Villa Ekinoks</title>
+    <style>
+        body {
+            font-family: 'Tahoma', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        .header {
+            background-color: #2c5aa0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .verification-code {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-right: 4px solid #2c5aa0;
+            text-align: center;
+        }
+        .code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c5aa0;
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #2c5aa0;
+            direction: ltr;
+        }
+        .security-warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-right: 4px solid #ffc107;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        .welcome-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-right: 4px solid #28a745;
+        }
+        .expiry-info {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+        ul, ol {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏖️ Villa Ekinoks</h1>
+        <h2>🎉 به Villa Ekinoks خوش آمدید!</h2>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-section">
+            <h3>✨ ثبت نام تقریباً کامل شد!</h3>
+            <p>{{firstName}} {{lastName}} عزیز،</p>
+            <p>به Villa Ekinoks خوش آمدید! ما از اینکه شما به جامعه مسافران ما که به دنبال تجربیات استثنایی ویلا هستند، پیوسته‌اید، هیجان‌زده هستیم.</p>
+        </div>
+        
+        <p>برای تکمیل ثبت نام و فعال‌سازی حساب کاربری خود، لطفاً آدرس ایمیل خود را با استفاده از کد تأیید زیر تأیید کنید:</p>
+        
+        <div class="verification-code">
+            <h3>📧 کد تأیید ایمیل شما</h3>
+            <div class="code">{{verificationCode}}</div>
+            <p class="expiry-info">⏰ این کد در 24 ساعت منقضی می‌شود</p>
+        </div>
+        
+        <div class="security-warning">
+            <h3>🛡️ اطلاعات امنیتی</h3>
+            <p><strong>جزئیات ثبت نام:</strong></p>
+            <ul>
+                <li><strong>ایمیل:</strong> {{email}}</li>
+                <li><strong>زمان ثبت نام:</strong> {{registrationTime}}</li>
+                <li><strong>نوع حساب:</strong> کاربر مهمان ویلا</li>
+            </ul>
+            <p><strong>مهم:</strong> اگر این حساب را ایجاد نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید یا با تیم پشتیبانی ما تماس بگیرید.</p>
+        </div>
+        
+        <p><strong>نحوه تأیید حساب شما:</strong></p>
+        <ol>
+            <li>به صفحه ثبت نام Villa Ekinoks بازگردید</li>
+            <li>کد تأیید 6 رقمی بالا را وارد کنید</li>
+            <li>فعال‌سازی حساب خود را تکمیل کنید</li>
+            <li>شروع به کشف مقاصد شگفت‌انگیز ویلا کنید!</li>
+        </ol>
+        
+        <p><strong>چه اتفاقی بعد از تأیید می‌افتد:</strong></p>
+        <ul>
+            <li>دسترسی کامل برای مرور و رزرو ویلاها</li>
+            <li>پیشنهادات شخصی‌سازی شده بر اساس ترجیحات شما</li>
+            <li>پیشنهادات انحصاری و دسترسی زودهنگام به ملک‌های جدید</li>
+            <li>پشتیبانی مشتری 24/7 برای رزروهای شما</li>
+        </ul>
+        
+        <p>اگر در فرآیند تأیید مشکلی دارید، لطفاً از تماس با تیم پشتیبانی ما دریغ نکنید.</p>
+        
+        <p>با بهترین آرزوها،<br>
+        تیم Villa Ekinoks</p>
+    </div>
+    
+    <div class="footer">
+        <p>Villa Ekinoks | info@villaekinoks.com | +90 XXX XXX XX XX</p>
+        <p>این کد تأیید فقط 24 ساعت معتبر است. این کد را با هیچ کس به اشتراک نگذارید.</p>
+        <p><small>اگر برای این حساب ثبت نام نکرده‌اید، لطفاً فوراً با پشتیبانی تماس بگیرید.</small></p>
+    </div>
+</body>
+</html>
