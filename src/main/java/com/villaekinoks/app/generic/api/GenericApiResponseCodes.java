@@ -16,6 +16,7 @@ public class GenericApiResponseCodes {
     public static final String UPDATE_VILLA_SUCCESS = "200#2002";
     public static final String GET_VILLA_PRICINGSCHEME_SUCCESS = "200#2003";
     public static final String GET_VILLA_SUCCESS = "200#2004";
+    public static final String GET_VILLA_FACILITIES_SUCCESS = "200#2005";
   }
 
   public static class SystemAdminUserRegistrationController {

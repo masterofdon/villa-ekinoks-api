@@ -1,5 +1,7 @@
 package com.villaekinoks.app.villa.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import com.villaekinoks.app.user.VillaAdminUserRegistrationStatus;
 import com.villaekinoks.app.user.service.VillaAdminUserService;
 import com.villaekinoks.app.user.service.VillaOwnerRegistrationService;
 import com.villaekinoks.app.villa.Villa;
+import com.villaekinoks.app.villa.VillaFacilityItem;
 import com.villaekinoks.app.villa.VillaPrivateInfo;
 import com.villaekinoks.app.villa.VillaPublicInfo;
 import com.villaekinoks.app.villa.response.Create_Villa_WC_MLS_XAction_Response;
@@ -31,6 +34,7 @@ import com.villaekinoks.app.villa.response.Get_Villa_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_PricingRange_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PrivateInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PublicInfo_WC_MLS_XAction_Response;
+import com.villaekinoks.app.villa.service.VillaFacilityItemService;
 import com.villaekinoks.app.villa.service.VillaService;
 import com.villaekinoks.app.villa.xaction.Create_Villa_WC_MLS_XAction;
 import com.villaekinoks.app.villa.xaction.Update_Villa_PrivateInfo_WC_MLS_XAction;
@@ -59,6 +63,8 @@ public class VillaController {
   private final PricingRangeUtilService pricingRangeUtilService;
 
   private final AddressService addressService;
+
+  private final VillaFacilityItemService villaFacilityItemService;
 
   @GetMapping("/{id}")
   public GenericApiResponse<Get_Villa_WC_MLS_XAction_Response> getVillaById(@PathVariable String id) {
@@ -289,5 +295,22 @@ public class VillaController {
         GenericApiResponseMessages.Generic.SUCCESS,
         GenericApiResponseCodes.VillaController.UPDATE_VILLA_SUCCESS,
         new Update_PricingRange_WC_MLS_XAction_Response(pricing.getId()));
+  }
+
+  @GetMapping("/{id}/villa-facilities")
+  public GenericApiResponse<List<VillaFacilityItem>> getVillaFacilities(
+      @PathVariable String id) {
+
+    Villa villa = this.villaService.getById(id);
+    if (villa == null) {
+      throw new NotFoundException("Villa Not Found", "404#0011");
+    }
+
+    List<VillaFacilityItem> facilities = this.villaFacilityItemService.getAllByVillaId(id);
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        GenericApiResponseCodes.VillaController.GET_VILLA_FACILITIES_SUCCESS,
+        facilities);
   }
 }

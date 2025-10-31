@@ -52,4 +52,7 @@ public class Villa {
   @JsonIncludeProperties({ "id", "personalinfo" })
   private SystemAdminUser createdby;
 
+  @OneToMany(mappedBy = "villa", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+  @JsonIgnore
+  private Set<VillaFacilityItem> facilities;
 }
