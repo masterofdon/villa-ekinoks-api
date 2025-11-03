@@ -1,6 +1,8 @@
 package com.villaekinoks.app.villa.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,8 @@ import com.villaekinoks.app.generic.api.GenericApiResponseCodes;
 import com.villaekinoks.app.generic.api.GenericApiResponseMessages;
 import com.villaekinoks.app.generic.entity.Address;
 import com.villaekinoks.app.generic.service.AddressService;
+import com.villaekinoks.app.propertyfacility.VillaFacility;
+import com.villaekinoks.app.propertyfacility.service.VillaFacilityService;
 import com.villaekinoks.app.user.SystemAdminUser;
 import com.villaekinoks.app.user.VillaAdminUser;
 import com.villaekinoks.app.user.VillaAdminUserRegistrationStatus;
@@ -29,13 +33,16 @@ import com.villaekinoks.app.villa.Villa;
 import com.villaekinoks.app.villa.VillaFacilityItem;
 import com.villaekinoks.app.villa.VillaPrivateInfo;
 import com.villaekinoks.app.villa.VillaPublicInfo;
+import com.villaekinoks.app.villa.response.Create_VillaFacilityItem_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Create_Villa_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Get_Villa_WC_MLS_XAction_Response;
+import com.villaekinoks.app.villa.response.SimpleVillaFacilityItemView;
 import com.villaekinoks.app.villa.response.Update_PricingRange_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PrivateInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.response.Update_Villa_PublicInfo_WC_MLS_XAction_Response;
 import com.villaekinoks.app.villa.service.VillaFacilityItemService;
 import com.villaekinoks.app.villa.service.VillaService;
+import com.villaekinoks.app.villa.xaction.Create_VillaFacilityItem_WC_MLS_XAction;
 import com.villaekinoks.app.villa.xaction.Create_Villa_WC_MLS_XAction;
 import com.villaekinoks.app.villa.xaction.Update_Villa_PrivateInfo_WC_MLS_XAction;
 import com.villaekinoks.app.villa.xaction.Update_Villa_PublicInfo_WC_MLS_XAction;
@@ -65,6 +72,8 @@ public class VillaController {
   private final AddressService addressService;
 
   private final VillaFacilityItemService villaFacilityItemService;
+
+  private final VillaFacilityService villaFacilityService;
 
   @GetMapping("/{id}")
   public GenericApiResponse<Get_Villa_WC_MLS_XAction_Response> getVillaById(@PathVariable String id) {
@@ -298,7 +307,7 @@ public class VillaController {
   }
 
   @GetMapping("/{id}/villa-facilities")
-  public GenericApiResponse<List<VillaFacilityItem>> getVillaFacilities(
+  public GenericApiResponse<Map<String, List<SimpleVillaFacilityItemView>>> getVillaFacilities(
       @PathVariable String id) {
 
     Villa villa = this.villaService.getById(id);
@@ -307,10 +316,48 @@ public class VillaController {
     }
 
     List<VillaFacilityItem> facilities = this.villaFacilityItemService.getAllByVillaId(id);
+    if (facilities == null) {
+      facilities = List.of();
+    }
+
+    Map<String, List<SimpleVillaFacilityItemView>> grouped = new HashMap<>();
+    for (VillaFacilityItem item : facilities) {
+      String categoryName = item.getFacility().getCategory().getName();
+      if (grouped.containsKey(categoryName) == false) {
+        grouped.put(categoryName, new java.util.ArrayList<>());
+      }
+      grouped.get(categoryName)
+          .add(new SimpleVillaFacilityItemView(item.getFacility().getName(), item.getFacility().getDescription()));
+    }
+
     return new GenericApiResponse<>(
         HttpStatus.OK.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         GenericApiResponseCodes.VillaController.GET_VILLA_FACILITIES_SUCCESS,
-        facilities);
+        grouped);
+  }
+
+  @PostMapping("/{id}/villa-facilities")
+  public GenericApiResponse<Create_VillaFacilityItem_WC_MLS_XAction_Response> createVillaFacilityItem(
+      @PathVariable String id,
+      @RequestBody Create_VillaFacilityItem_WC_MLS_XAction xAction) {
+
+    Villa villa = this.villaService.getById(id);
+    if (villa == null) {
+      throw new NotFoundException("Villa Not Found", "404#0011");
+    }
+    VillaFacility facility = this.villaFacilityService.getById(xAction.getVillafacilityid());
+    if (facility == null) {
+      throw new NotFoundException("Villa Facility Not Found", "404#0020");
+    }
+    VillaFacilityItem facilityItem = new VillaFacilityItem();
+    facilityItem.setVilla(villa);
+    facilityItem.setFacility(facility);
+    facilityItem = this.villaFacilityItemService.create(facilityItem);
+    return new GenericApiResponse<>(
+        HttpStatus.CREATED.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        GenericApiResponseCodes.VillaController.CREATE_VILLA_FACILITY_ITEM_SUCCESS,
+        new Create_VillaFacilityItem_WC_MLS_XAction_Response(facilityItem.getId()));
   }
 }
