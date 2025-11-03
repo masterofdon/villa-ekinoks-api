@@ -3,6 +3,7 @@ package com.villaekinoks.app.villa.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -320,8 +321,12 @@ public class VillaController {
       facilities = List.of();
     }
 
+    List<VillaFacilityItem> sortedFacilities = facilities.stream().sorted(
+        (a, b) -> a.getFacility().getCategory().getPriority().compareTo(b.getFacility().getCategory().getPriority()))
+        .collect(Collectors.toList());
+
     Map<String, List<SimpleVillaFacilityItemView>> grouped = new HashMap<>();
-    for (VillaFacilityItem item : facilities) {
+    for (VillaFacilityItem item : sortedFacilities) {
       String categoryName = item.getFacility().getCategory().getName();
       if (grouped.containsKey(categoryName) == false) {
         grouped.put(categoryName, new java.util.ArrayList<>());
