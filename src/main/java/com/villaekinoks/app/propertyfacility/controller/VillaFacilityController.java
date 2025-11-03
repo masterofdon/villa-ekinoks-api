@@ -44,7 +44,7 @@ public class VillaFacilityController {
     facility = villaFacilityService.create(facility);
 
     return new GenericApiResponse<>(
-        HttpStatus.OK.value(),
+        HttpStatus.CREATED.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         "201#74813",
         new Create_VillaFacility_WC_MLS_XAction_Response(facility.getId()));

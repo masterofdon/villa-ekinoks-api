@@ -31,7 +31,7 @@ public class VillaFacilityCategoryController {
     category.setPriority(xAction.getPriority());
     category = villaFacilityCategoryService.create(category);
     return new GenericApiResponse<>(
-        HttpStatus.OK.value(),
+        HttpStatus.CREATED.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         "201#49143",
         new Create_VillaFacilityCategory_WC_MLS_XAction_Response(category.getId()));
