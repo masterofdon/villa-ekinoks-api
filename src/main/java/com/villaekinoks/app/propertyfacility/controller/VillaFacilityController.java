@@ -38,9 +38,11 @@ public class VillaFacilityController {
   @GetMapping
   public GenericApiResponse<Map<String, VillaFacilityCategoryMapView>> getAllVillaFacilities() {
     List<VillaFacility> result = villaFacilityService.getAll();
-
+    List<VillaFacility> sorted = result.stream().sorted(
+        (a, b) -> a.getCategory().getPriority().compareTo(b.getCategory().getPriority()))
+        .toList();
     Map<String, VillaFacilityCategoryMapView> mapped = new HashMap<>();
-    for (VillaFacility facility : result) {
+    for (VillaFacility facility : sorted) {
       String categoryName = facility.getCategory().getName();
       if (mapped.containsKey(categoryName) == false) {
         mapped.put(categoryName, new VillaFacilityCategoryMapView(facility.getCategory().getId(),
