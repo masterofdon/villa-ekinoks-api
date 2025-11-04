@@ -47,9 +47,8 @@ public class VillaFacilityController {
       if (mapped.containsKey(categoryName) == false) {
         mapped.put(categoryName, new VillaFacilityCategoryMapView(facility.getCategory().getId(),
             facility.getCategory().getPriority(), new ArrayList<>()));
-      } else {
-        mapped.get(categoryName).getFacilities().add(new VillaFacilitySimpleView(facility));
       }
+      mapped.get(categoryName).getFacilities().add(new VillaFacilitySimpleView(facility));
     }
 
     return new GenericApiResponse<>(
