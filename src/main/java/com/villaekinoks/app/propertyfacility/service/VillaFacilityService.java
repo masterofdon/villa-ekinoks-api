@@ -1,5 +1,7 @@
 package com.villaekinoks.app.propertyfacility.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.villaekinoks.app.propertyfacility.VillaFacility;
@@ -10,11 +12,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VillaFacilityService {
-  
+
   private final VillaFacilityRepository villaFacilityRepository;
 
   public VillaFacility getById(String id) {
     return villaFacilityRepository.findById(id).orElse(null);
+  }
+
+  public List<VillaFacility> getAll() {
+    return villaFacilityRepository.findAll();
   }
 
   public VillaFacility create(VillaFacility facility) {

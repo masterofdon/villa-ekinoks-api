@@ -1,6 +1,12 @@
 package com.villaekinoks.app.propertyfacility.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +20,8 @@ import com.villaekinoks.app.propertyfacility.VillaFacilityCategory;
 import com.villaekinoks.app.propertyfacility.response.Create_VillaFacility_WC_MLS_XAction_Response;
 import com.villaekinoks.app.propertyfacility.service.VillaFacilityCategoryService;
 import com.villaekinoks.app.propertyfacility.service.VillaFacilityService;
+import com.villaekinoks.app.propertyfacility.view.VillaFacilityCategoryMapView;
+import com.villaekinoks.app.propertyfacility.view.VillaFacilitySimpleView;
 import com.villaekinoks.app.propertyfacility.xaction.Create_VillaFacility_WC_MLS_XAction;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +34,28 @@ public class VillaFacilityController {
   private final VillaFacilityService villaFacilityService;
 
   private final VillaFacilityCategoryService villaFacilityCategoryService;
+
+  @GetMapping
+  public GenericApiResponse<Map<String, VillaFacilityCategoryMapView>> getAllVillaFacilities() {
+    List<VillaFacility> result = villaFacilityService.getAll();
+
+    Map<String, VillaFacilityCategoryMapView> mapped = new HashMap<>();
+    for (VillaFacility facility : result) {
+      String categoryName = facility.getCategory().getName();
+      if (mapped.containsKey(categoryName) == false) {
+        mapped.put(categoryName, new VillaFacilityCategoryMapView(facility.getCategory().getId(),
+            facility.getCategory().getPriority(), new ArrayList<>()));
+      } else {
+        mapped.get(categoryName).getFacilities().add(new VillaFacilitySimpleView(facility));
+      }
+    }
+
+    return new GenericApiResponse<>(
+        HttpStatus.OK.value(),
+        GenericApiResponseMessages.Generic.SUCCESS,
+        "200#74812",
+        mapped);
+  }
 
   @PostMapping
   public GenericApiResponse<Create_VillaFacility_WC_MLS_XAction_Response> createVillaFacility(
