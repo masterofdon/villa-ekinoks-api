@@ -343,6 +343,7 @@ public class VillaController {
   }
 
   @PostMapping("/{id}/villa-facilities")
+  @Transactional
   public GenericApiResponse<Create_VillaFacilityItem_WC_MLS_XAction_Response> createVillaFacilityItem(
       @PathVariable String id,
       @RequestBody Create_VillaFacilityItem_WC_MLS_XAction xAction) {
@@ -351,18 +352,62 @@ public class VillaController {
     if (villa == null) {
       throw new NotFoundException("Villa Not Found", "404#0011");
     }
-    VillaFacility facility = this.villaFacilityService.getById(xAction.getVillafacilityid());
-    if (facility == null) {
-      throw new NotFoundException("Villa Facility Not Found", "404#0020");
+
+    // Validate input
+    if (xAction.getVillafacilityid() == null || xAction.getVillafacilityid().isEmpty()) {
+      throw new BadApiRequestException("Villa facility IDs list cannot be empty", "400#0021");
     }
-    VillaFacilityItem facilityItem = new VillaFacilityItem();
-    facilityItem.setVilla(villa);
-    facilityItem.setFacility(facility);
-    facilityItem = this.villaFacilityItemService.create(facilityItem);
+
+    // Get existing facility items for this villa
+    List<VillaFacilityItem> existingItems = this.villaFacilityItemService.getAllByVillaId(id);
+    
+    // Extract existing facility IDs for comparison
+    List<String> existingFacilityIds = existingItems.stream()
+        .map(item -> item.getFacility().getId())
+        .collect(Collectors.toList());
+
+    // Process new facility IDs
+    List<String> newFacilityIds = xAction.getVillafacilityid();
+    List<VillaFacilityItem> itemsToCreate = new java.util.ArrayList<>();
+    
+    for (String facilityId : newFacilityIds) {
+      // Skip if facility is already selected for this villa
+      if (existingFacilityIds.contains(facilityId)) {
+        continue;
+      }
+
+      // Validate that the facility exists
+      VillaFacility facility = this.villaFacilityService.getById(facilityId);
+      if (facility == null) {
+        throw new NotFoundException("Villa Facility Not Found with ID: " + facilityId, "404#0020");
+      }
+
+      // Create new facility item
+      VillaFacilityItem facilityItem = new VillaFacilityItem();
+      facilityItem.setVilla(villa);
+      facilityItem.setFacility(facility);
+      itemsToCreate.add(facilityItem);
+    }
+
+    // Find items to delete (exist in DB but not in new list)
+    List<VillaFacilityItem> itemsToDelete = existingItems.stream()
+        .filter(item -> !newFacilityIds.contains(item.getFacility().getId()))
+        .collect(Collectors.toList());
+
+    // Create new facility items
+    for (VillaFacilityItem item : itemsToCreate) {
+      this.villaFacilityItemService.create(item);
+    }
+
+    // Delete items that are no longer in the list
+    if (!itemsToDelete.isEmpty()) {
+      this.villaFacilityItemService.deleteAll(itemsToDelete);
+    }
+
     return new GenericApiResponse<>(
-        HttpStatus.CREATED.value(),
+        HttpStatus.OK.value(),
         GenericApiResponseMessages.Generic.SUCCESS,
         GenericApiResponseCodes.VillaController.CREATE_VILLA_FACILITY_ITEM_SUCCESS,
-        new Create_VillaFacilityItem_WC_MLS_XAction_Response(facilityItem.getId()));
+        new Create_VillaFacilityItem_WC_MLS_XAction_Response("Processed " + itemsToCreate.size() + " new items, deleted " + itemsToDelete.size() + " items"));
   }
 }

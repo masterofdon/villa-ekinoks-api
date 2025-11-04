@@ -1,6 +1,7 @@
 package com.villaekinoks.app.villa.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -25,5 +26,13 @@ public class VillaFacilityItemService {
 
   public void delete(VillaFacilityItem villaFacilityItem) {
     villaFacilityItemRepository.delete(villaFacilityItem);
+  }
+
+  public Optional<VillaFacilityItem> findByVillaIdAndFacilityId(String villaId, String facilityId) {
+    return villaFacilityItemRepository.findByVillaIdAndFacilityId(villaId, facilityId);
+  }
+
+  public void deleteAll(List<VillaFacilityItem> villaFacilityItems) {
+    villaFacilityItemRepository.deleteAll(villaFacilityItems);
   }
 }
