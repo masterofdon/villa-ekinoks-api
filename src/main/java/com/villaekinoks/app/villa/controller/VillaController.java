@@ -354,7 +354,7 @@ public class VillaController {
     }
 
     // Validate input
-    if (xAction.getVillafacilityid() == null || xAction.getVillafacilityid().isEmpty()) {
+    if (xAction.getVillafacilityids() == null || xAction.getVillafacilityids().isEmpty()) {
       throw new BadApiRequestException("Villa facility IDs list cannot be empty", "400#0021");
     }
 
@@ -367,7 +367,7 @@ public class VillaController {
         .collect(Collectors.toList());
 
     // Process new facility IDs
-    List<String> newFacilityIds = xAction.getVillafacilityid();
+    List<String> newFacilityIds = xAction.getVillafacilityids();
     List<VillaFacilityItem> itemsToCreate = new java.util.ArrayList<>();
     
     for (String facilityId : newFacilityIds) {

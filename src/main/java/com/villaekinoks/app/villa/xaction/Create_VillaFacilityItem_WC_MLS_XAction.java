@@ -12,5 +12,5 @@ import lombok.Setter;
 @Getter
 public class Create_VillaFacilityItem_WC_MLS_XAction {
 
-  private List<String> villafacilityid;
+  private List<String> villafacilityids;
 }
