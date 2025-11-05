@@ -2,6 +2,7 @@ package com.villaekinoks.app.propertyfacility;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.villaekinoks.app.generic.entity.LatLng;
 import com.villaekinoks.app.villa.Villa;
 
@@ -26,6 +27,7 @@ public class VillaNearbyService {
 
   @ManyToOne
   @JoinColumn(name = "villa_id", nullable = false)
+  @JsonIgnore
   private Villa villa;
 
   @Enumerated(EnumType.STRING)
